@@ -6,12 +6,13 @@ All notable changes to this project will be documented in this file.
 Changelog format adheres to [Keep a Changelog](http://keepachangelog.com/)</sub>
 
 ## TODO
-- threejs canvas
+
 - eventemitter
 - programmatic API
 - demo
 
 ## [Unreleased]
+- threejs canvas
 
 ## **0.1.0** - 2016-03-05
 ### Added

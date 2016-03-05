@@ -2,8 +2,6 @@
 
 > is a placeholder to play tic tac toe in 3d
 
-**Do not download me, right now I am just a parked package**
-
 **Table of Contents**
 
 * [Installation](#installation)
