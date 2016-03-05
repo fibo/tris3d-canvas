@@ -1,0 +1,50 @@
+{
+  "name": "tris3d-canvas",
+  "description": "<package-description>",
+  "version": "0.0.0",
+  "homepage": "http://g14n.info/tris3d-canvas",
+  "author": {
+    "name": "Gianluca Casati",
+    "url": "http://g14n.info"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "_build": "npm test && npm run browserify && npm run minify && npm run jekyll; git status",
+    "_push": "git push origin master && npm run gh-pages_push",
+    "_pull": "git pull origin master && npm run gh-pages_pull",
+    "browserify": "browserify -r ./index.js:${npm_package_name} -o dist/${npm_package_name}.js",
+    "check-deps": "npm outdated",
+    "cp": "npm run cp_package.json",
+    "cp_package.json": "cp package.json gh-pages/_data/",
+    "gh-pages_push": "git subtree --prefix gh-pages push origin gh-pages",
+    "gh-pages_pull": "git subtree --prefix gh-pages pull origin gh-pages",
+    "lint": "standard src/*",
+    "minify": "cd dist; uglifyjs ${npm_package_name}.js --source-map ${npm_package_name}.map --output ${npm_package_name}.min.js --compress --mangle --preamble \"// ${npm_package_name}.js ${npm_package_homepage} \n// license ${npm_package_license}\"; cd -",
+    "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fibo/tris3d-canvas.git"
+  },
+  "keywords": [
+    "tris3d",
+    "3d",
+    "game"
+  ],
+  "bugs": {
+    "url": "https://github.com/fibo/tris3d-canvas/issues"
+  },
+  "pre-commit": [
+    "lint",
+    "test",
+    "check-deps"
+  ],
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "standard": "^6.0.7",
+    "uglify-js": "^2.6.2"
+  },
+  "dependencies": {}
+}
