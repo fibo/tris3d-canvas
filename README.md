@@ -5,6 +5,7 @@
 **Table of Contents**
 
 * [Installation](#installation)
+* [Usage](#usage)
 * [API](#api)
 * [License](#license)
 
@@ -35,6 +36,32 @@ or use a CDN adding this to your HTML page
 
 ```
 <script src="https://cdn.rawgit.com/fibo/tris3d-canvas/master/dist/tris3d-canvas.min.js"></script>
+```
+
+## Usage
+
+```
+var Tris3dCanvas = require('tris3d-canvas')
+
+var camera = tris3dCanvas.camera
+var cube = tris3dCanvas.cube
+var renderer = tris3dCanvas.renderer
+var scene = tris3dCanvas.scene
+
+var scene = Tris3dCanvas.scene
+
+document.body.appendChild(renderer.domElement)
+
+var render = function () {
+  requestAnimationFrame(render)
+
+  cube.rotation.x += 0.1
+  cube.rotation.y += 0.1
+
+  renderer.render(scene, camera)
+}
+
+render()
 ```
 
 ## API
