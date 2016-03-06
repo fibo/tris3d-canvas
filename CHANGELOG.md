@@ -14,6 +14,7 @@ Changelog format adheres to [Keep a Changelog](http://keepachangelog.com/)</sub>
 
 ## [Unreleased]
 - threejs canvas
+- babel transpiler
 
 ## **0.1.0** - 2016-03-05
 ### Added
