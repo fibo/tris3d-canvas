@@ -1,23 +1,26 @@
 var THREE = require('three')
 
-export default class Tris3dCube {
-  constructor (board, position) {
-    const defaultColor = new THREE.Color(0xaa0000)
-    const defaultOpacity = 0.17
-    const size = board.cubeSize
+function Tris3dCube (/* board, position */) {
+  var defaultColor = new THREE.Color(0xaa0000)
+  var defaultOpacity = 0.17
+  // var size = board.cubeSize
+  var size = 1
 
-    const geometry = new THREE.BoxGeometry(size, size, size)
+  var geometry = new THREE.BoxGeometry(size, size, size)
 
-    const material = new THREE.MeshBasicMaterial({
-      color: defaultColor,
-      opacity: defaultOpacity,
-      transparent: true
-    })
+  var material = new THREE.MeshBasicMaterial({
+    color: defaultColor,
+    opacity: defaultOpacity,
+    transparent: true
+  })
 
-    let mesh = new THREE.Mesh(geometry, material)
+  var mesh = new THREE.Mesh(geometry, material)
 
-    mesh.position.x = position.x * board.unitSize
-    mesh.position.y = position.y * board.unitSize
-    mesh.position.z = position.z * board.unitSize
-  }
+  this.mesh = mesh
+
+//  mesh.position.x = position.x * board.unitSize
+//  mesh.position.y = position.y * board.unitSize
+//  mesh.position.z = position.z * board.unitSize
 }
+
+module.exports = Tris3dCube

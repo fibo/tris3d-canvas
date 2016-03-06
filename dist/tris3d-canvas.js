@@ -1,4 +1,23 @@
 require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+function staticProps (obj) {
+  return function (props) {
+    var statik = {}
+
+    for (var propName in props) {
+      var propValue = props[propName]
+
+      statik[propName] = {
+        value: propValue,
+        writable: false
+      }
+    }
+
+    Object.defineProperties(obj, statik)
+  }
+}
+module.exports = staticProps
+
+},{}],2:[function(require,module,exports){
 var self = self || {};// File:src/Three.js
 
 /**
@@ -40568,41 +40587,57 @@ if (typeof exports !== 'undefined') {
   this['THREE'] = THREE;
 }
 
-},{}],2:[function(require,module,exports){
-'use strict';
+},{}],3:[function(require,module,exports){
+var staticProps = require('static-props')
+var THREE = require('three')
+var Tris3dCube = require('./Cube')
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+function Tris3dCanvas (width, height) {
+  var scene = this.scene = new THREE.Scene()
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  var camera = this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+  camera.position.z = 5
 
-var THREE = require('three');
+  var renderer = this.renderer = new THREE.WebGLRenderer()
+  renderer.setSize(width, height)
 
-// TODO import Cube from './Cube'
+  var cube = new Tris3dCube()
+  scene.add(cube.mesh)
 
-var Tris3dCanvas = function Tris3dCanvas(width, height) {
-  _classCallCheck(this, Tris3dCanvas);
+  staticProps(this)({ cube: cube })
+}
 
-  var scene = this.scene = new THREE.Scene();
+module.exports = Tris3dCanvas
 
-  var camera = this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-  camera.position.z = 5;
+},{"./Cube":4,"static-props":1,"three":2}],4:[function(require,module,exports){
+var THREE = require('three')
 
-  var renderer = this.renderer = new THREE.WebGLRenderer();
-  renderer.setSize(width, height);
+function Tris3dCube (/* board, position */) {
+  var defaultColor = new THREE.Color(0xaa0000)
+  var defaultOpacity = 0.17
+  // var size = board.cubeSize
+  var size = 1
 
-  var geometry = new THREE.BoxGeometry(1, 1, 1);
-  var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  var cube = this.cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-};
+  var geometry = new THREE.BoxGeometry(size, size, size)
 
-exports.default = Tris3dCanvas;
+  var material = new THREE.MeshBasicMaterial({
+    color: defaultColor,
+    opacity: defaultOpacity,
+    transparent: true
+  })
 
-},{"three":1}],"tris3d-canvas":[function(require,module,exports){
-'use strict';
+  var mesh = new THREE.Mesh(geometry, material)
 
-module.exports = require('./src/Canvas');
+  this.mesh = mesh
 
-},{"./src/Canvas":2}]},{},[]);
+//  mesh.position.x = position.x * board.unitSize
+//  mesh.position.y = position.y * board.unitSize
+//  mesh.position.z = position.z * board.unitSize
+}
+
+module.exports = Tris3dCube
+
+},{"three":2}],"tris3d-canvas":[function(require,module,exports){
+module.exports = require('./src/Canvas')
+
+},{"./src/Canvas":3}]},{},[]);
