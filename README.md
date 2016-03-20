@@ -2,8 +2,6 @@
 
 > is a placeholder to play tic tac toe in 3d
 
-** Do not download me, I am not ready yet**
-
 **Table of Contents**
 
 * [Installation](#installation)
