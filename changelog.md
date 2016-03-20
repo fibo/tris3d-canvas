@@ -16,12 +16,13 @@ Changelog format adheres to [Keep a Changelog](http://keepachangelog.com/)</sub>
 
 - eventemitter
 - programmatic API
-- demo
 - change rawgit cdn links in gh-pages/index.html when stable
+- trackball controls
 
 ## [Unreleased]
 ### Added
 - bower
+- demo
 - threejs canvas
 - budo dev server
 
