@@ -17,6 +17,7 @@
     "check-deps": "npm outdated",
     "cp": "npm run cp_package.json",
     "cp_package.json": "cp package.json gh-pages/_data/",
+    "example": "budo src/example.js",
     "gh-pages_push": "git subtree --prefix gh-pages push origin gh-pages",
     "gh-pages_pull": "git subtree --prefix gh-pages pull origin gh-pages",
     "lint": "standard src/*",
@@ -42,6 +43,7 @@
     "check-deps"
   ],
   "devDependencies": {
+    "beefy": "^2.1.6",
     "browserify": "^13.0.0",
     "standard": "^6.0.7",
     "tris3d-ai": "^0.1.0",

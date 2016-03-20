@@ -37,7 +37,16 @@ or use a CDN adding this to your HTML page
 
 ## Usage
 
-See [example usage](https://github.com/fibo/tris3d-canvas/blob/master/src/example/usage.js)
+Run [example.js](https://github.com/fibo/tris3d-canvas/blob/master/src/example.js) with [budo](https://github.com/mattdesl/budo) dev server.
+
+```
+npm run example
+```
+
+You can open even:
+
+* open your browser on start: `npm run example -- --open`
+* enable also live reload: `npm run example -- --open --live`
 
 ## API
 
