@@ -1,5 +1,8 @@
-var staticProps = require('static-props')
 var THREE = require('three')
+
+var TrackballControls = require('./TrackballControls')
+
+var staticProps = require('static-props')
 var Tris3dBoard = require('./Board')
 
 function Tris3dCanvas (width, height) {
@@ -17,11 +20,16 @@ function Tris3dCanvas (width, height) {
   renderer.setClearColor(backgroundColor, 1)
   renderer.setSize(width, height)
 
+  var canvas = renderer.domElement
+
   var board = new Tris3dBoard(scene)
+
+  var controls = new TrackballControls(camera, canvas)
 
   staticProps(this)({
     board: board,
     camera: camera,
+    controls: controls,
     renderer: renderer,
     scene: scene
   })
