@@ -43,8 +43,8 @@
     "check-deps"
   ],
   "devDependencies": {
-    "beefy": "^2.1.6",
     "browserify": "^13.0.0",
+    "budo": "^8.1.0",
     "standard": "^6.0.7",
     "tris3d-ai": "^0.1.0",
     "uglify-js": "^2.6.2"

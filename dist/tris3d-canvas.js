@@ -40589,30 +40589,68 @@ if (typeof exports !== 'undefined') {
 
 },{}],3:[function(require,module,exports){
 var staticProps = require('static-props')
-var THREE = require('three')
 var Tris3dCube = require('./Cube')
 
-function Tris3dCanvas (width, height) {
-  var scene = this.scene = new THREE.Scene()
+function Tris3dBoard (scene) {
+  var cubes = []
+  var cubeSize = 80
+  var unitSize = 150
 
-  var camera = this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+  // Create 3x3x3 cubes
+  for (var i = -1; i < 2; i++) {
+    for (var j = -1; j < 2; j++) {
+       for (var k = -1; k < 2; k++) {
+         var cube = new Tris3dCube(cubeSize, unitSize, {x: k , y: j , z: i})
+         cubes.push(cube)
+         scene.add(cube.mesh)
+      }
+    }
+  }
+
+  staticProps(this)({
+    cubes: cubes
+  })
+}
+
+module.exports = Tris3dBoard
+
+},{"./Cube":5,"static-props":1}],4:[function(require,module,exports){
+var staticProps = require('static-props')
+var THREE = require('three')
+var Tris3dBoard = require('./Board')
+
+function Tris3dCanvas (width, height) {
+  var backgroundColor = 0xeeeeee
+  var scene = new THREE.Scene()
+
+  var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
   camera.position.z = 5
 
-  var renderer = this.renderer = new THREE.WebGLRenderer()
+  var renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    clearAlpha: 1
+  })
+
+  renderer.setClearColor(backgroundColor, 1)
   renderer.setSize(width, height)
 
-  var cube = new Tris3dCube()
-  scene.add(cube.mesh)
+  var board = new Tris3dBoard(scene)
 
-  staticProps(this)({ cube: cube })
+  staticProps(this)({
+    camera: camera,
+    board: board,
+    renderer: renderer,
+    scene: scene
+  })
 }
 
 module.exports = Tris3dCanvas
 
-},{"./Cube":4,"static-props":1,"three":2}],4:[function(require,module,exports){
+},{"./Board":3,"static-props":1,"three":2}],5:[function(require,module,exports){
+var staticProps = require('static-props')
 var THREE = require('three')
 
-function Tris3dCube (/* board, position */) {
+function Tris3dCube (cubeSize, uniteSize, position) {
   var defaultColor = new THREE.Color(0xaa0000)
   var defaultOpacity = 0.17
   // var size = board.cubeSize
@@ -40628,16 +40666,18 @@ function Tris3dCube (/* board, position */) {
 
   var mesh = new THREE.Mesh(geometry, material)
 
-  this.mesh = mesh
+  mesh.position.x = position.x * board.unitSize
+  mesh.position.y = position.y * board.unitSize
+  mesh.position.z = position.z * board.unitSize
 
-//  mesh.position.x = position.x * board.unitSize
-//  mesh.position.y = position.y * board.unitSize
-//  mesh.position.z = position.z * board.unitSize
+  staticProps(this)({
+    mesh: mesh
+  })
 }
 
 module.exports = Tris3dCube
 
-},{"three":2}],"tris3d-canvas":[function(require,module,exports){
+},{"static-props":1,"three":2}],"tris3d-canvas":[function(require,module,exports){
 module.exports = require('./src/Canvas')
 
-},{"./src/Canvas":3}]},{},[]);
+},{"./src/Canvas":4}]},{},[]);
