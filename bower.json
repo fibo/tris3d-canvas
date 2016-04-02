@@ -1,9 +1,7 @@
 {
   "name": "tris3d-canvas",
   "main": [
-    "dist/tris3d-canvas.js",
-    "dist/tris3d-canvas.map",
-    "dist/tris3d-canvas.min.js"
+    "component.html"
   ],
   "homepage": "http://g14n.info/tris3d-canvas",
   "authors": [

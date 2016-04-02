@@ -21,10 +21,13 @@ Changelog format adheres to [Keep a Changelog](http://keepachangelog.com/)</sub>
 
 ## [Unreleased]
 ### Added
-- bower
 - demo
 - threejs canvas
 - budo dev server
+
+## **0.2.0** - 2016-04-02
+- bower
+- component.html
 
 ## **0.1.0** - 2016-03-05
 ### Added
