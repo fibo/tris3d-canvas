@@ -15,19 +15,18 @@ Changelog format adheres to [Keep a Changelog](http://keepachangelog.com/)</sub>
 ## TODO
 
 - eventemitter
-- programmatic API
-- change rawgit cdn links in gh-pages/index.html when stable
+- try to generate component.html dynamically client side
 
 ## [Unreleased]
 ### Added
-- demo
-- budo dev server
-- x3dom bower dep
 
 ## **0.2.0** - 2016-04-02
 - bower
 - component.html powered by x3dom
 - trackball controls
+- demo
+- budo dev server
+- x3dom bower dep
 
 ## **0.1.0** - 2016-03-05
 ### Added
