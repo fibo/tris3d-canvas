@@ -28,5 +28,8 @@
     "package.json",
     "src",
     "test"
-  ]
+  ],
+  "dependencies": {
+    "x3dom": "^1.7.1"
+  }
 }
