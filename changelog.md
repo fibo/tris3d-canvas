@@ -17,17 +17,16 @@ Changelog format adheres to [Keep a Changelog](http://keepachangelog.com/)</sub>
 - eventemitter
 - programmatic API
 - change rawgit cdn links in gh-pages/index.html when stable
-- trackball controls
 
 ## [Unreleased]
 ### Added
 - demo
-- threejs canvas
 - budo dev server
 
 ## **0.2.0** - 2016-04-02
 - bower
-- component.html
+- component.html powered by x3dom
+- trackball controls
 
 ## **0.1.0** - 2016-03-05
 ### Added
