@@ -6,6 +6,7 @@
 
 * [Installation](#installation)
 * [Usage](#usage)
+* [Example](#example)
 * [API](#api)
 * [License](#license)
 
@@ -13,20 +14,18 @@
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
-[![NPM](https://nodei.co/npm-dl/tris3d-canvas.png)](https://nodei.co/npm-dl/tris3d-canvas/)
-
 ## Installation
 
-With [npm](https://npmjs.org/) do
+With [npm][npm] do
 
-```bash
-$ npm install tris3d-canvas
+```
+npm install tris3d-canvas
 ```
 
-With [bower](http://bower.io/) do
+With [bower][bower] do
 
-```bash
-$ bower install tris3d-canvas
+```
+bower install tris3d-canvas
 ```
 
 or use a CDN adding this to your HTML page
@@ -37,20 +36,42 @@ or use a CDN adding this to your HTML page
 
 ## Usage
 
-Run [example.js](https://github.com/fibo/tris3d-canvas/blob/master/src/example.js) with [budo](https://github.com/mattdesl/budo) dev server.
+First of all, install x3dom. See [installation instructions here][install_x3dom].
+
+## Example
+
+See [online example][online_example] or do the following to serve an example page locally.
+
+Clone repo and install deps with [bower][bower] and [npm][npm]
+
+```
+npm install
+bower install
+```
+
+Run [example/usage.js][example_js] in [example/index.html][example_html] with [budo dev server][budo].
 
 ```
 npm run example
 ```
 
-You can open even:
+You can also:
 
 * open your browser on start: `npm run example -- --open`
 * enable also live reload: `npm run example -- --open --live`
 
 ## API
 
+The following events are emitted … (WIP)
+
 ## License
 
 [MIT](http://g14n.info/mit-license)
 
+[bower]: http://bower.io/
+[budo]: https://github.com/mattdesl/budo
+[example_js]: https://github.com/fibo/tris3d-canvas/blob/master/src/example/usage.js
+[example_html]: https://github.com/fibo/tris3d-canvas/blob/master/src/example/index.html
+[install_x3dom]: https://github.com/x3dom/dist#installation
+[npm]: https://npmjs.org/
+[online_example]: http://g14n.info/tris3d-canvas/example

@@ -1,5 +1,10 @@
 var Tris3dCanvas = require('tris3d-canvas')
 
+var el = document.createElement('div')
+el.innerHTML=Tris3dCanvas.component
+document.body.appendChild(el)
+/*
+
 var tris3dCanvas = new Tris3dCanvas(400, 400)
 
 var camera = tris3dCanvas.camera
@@ -21,3 +26,4 @@ function render () {
 }
 
 render()
+*/
