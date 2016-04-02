@@ -22,6 +22,7 @@ Changelog format adheres to [Keep a Changelog](http://keepachangelog.com/)</sub>
 ### Added
 - demo
 - budo dev server
+- x3dom bower dep
 
 ## **0.2.0** - 2016-04-02
 - bower
