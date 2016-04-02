@@ -58,7 +58,6 @@
   "dependencies": {
     "events": "^1.1.0",
     "static-props": "^0.1.0",
-    "three": "^0.74.0",
     "x3dom": "^1.7.1"
   }
 }
