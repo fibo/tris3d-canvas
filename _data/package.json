@@ -1,6 +1,6 @@
 {
   "name": "tris3d-canvas",
-  "description": "is a placeholder to play tic tac toe in 3d",
+  "description": "is a canvas to play tic tac toe in 3d",
   "version": "0.2.0",
   "homepage": "http://g14n.info/tris3d-canvas",
   "author": {
@@ -10,12 +10,10 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "_build": "npm run browserify && npm run minify && npm run jekyll; git status",
-    "_push": "git push origin master && npm run gh-pages_push",
-    "_pull": "git pull origin master && npm run gh-pages_pull",
+    "build": "npm run browserify && npm run minify && npm run jekyll; git status",
     "browserify": "npm run browserify_dist; npm run browserify_example",
     "browserify_dist": "browserify -r ./index.js:${npm_package_name} --transform brfs -o dist/${npm_package_name}.js",
-    "browserify_example": "browserify src/example/usage.js --transform brfs -o gh-pages/example/bundle.js",
+    "browserify_example": "browserify src/example/usage.js --global-transform brfs -o gh-pages/example/bundle.js",
     "check-deps": "npm outdated",
     "cp_package.json": "cp package.json gh-pages/_data/",
     "example": "budo src/example/usage.js --dir src/example --open --live -- --global-transform brfs",
@@ -27,6 +25,8 @@
     "lint": "standard src/*",
     "minify": "cd dist; uglifyjs ${npm_package_name}.js --source-map ${npm_package_name}.map --output ${npm_package_name}.min.js --compress --mangle --preamble \"// ${npm_package_name}.js ${npm_package_homepage} \n// license ${npm_package_license}\"; cd -",
     "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
+    "push": "git push origin master && npm run gh-pages_push",
+    "pull": "git pull origin master && npm run gh-pages_pull",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -51,7 +51,6 @@
     "browserify": "^13.0.0",
     "budo": "^8.1.0",
     "standard": "^6.0.7",
-    "tris3d-ai": "^0.1.0",
     "uglify-js": "^2.6.2"
   },
   "dependencies": {
