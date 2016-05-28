@@ -6,4 +6,5 @@ function changeColor (id) {
 }
 
 var component = fs.readFileSync(path.join(__dirname, 'component.html'), 'utf8')
+
 exports.component = component
