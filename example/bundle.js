@@ -1,19 +1,16 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (__dirname){
-var fs = require('fs')
+
 var path = require('path')
 
 function changeColor (id) {
   document.getElementById(id).setAttribute('diffuseColor', '0 0 1')
 }
 
-var component = fs.readFileSync(path.join(__dirname, 'component.html'), 'utf8')
+var component = "<x3d width=\"500px\" height=\"500px\">\n  <scene>\n    <transform translation='-3 -3 -3'>\n      <shape onclick=\"changeColor('0')\">\n        <appearance>\n          <material id=\"0\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 -3 -3'>\n      <shape onclick=\"changeColor('1')\">\n        <appearance>\n          <material id=\"1\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 -3 -3'>\n      <shape onclick=\"changeColor('2')\">\n        <appearance>\n          <material id=\"2\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='-3 0 -3'>\n      <shape onclick=\"changeColor('3')\">\n        <appearance>\n          <material id=\"3\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 0 -3'>\n      <shape onclick=\"changeColor('4')\">\n        <appearance>\n          <material id=\"4\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 0 -3'>\n      <shape onclick=\"changeColor('5')\">\n        <appearance>\n          <material id=\"5\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='-3 3 -3'>\n      <shape onclick=\"changeColor('6')\">\n        <appearance>\n          <material id=\"6\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 3 -3'>\n      <shape onclick=\"changeColor('7')\">\n        <appearance>\n          <material id=\"7\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 3 -3'>\n      <shape onclick=\"changeColor('8')\">\n        <appearance>\n          <material id=\"8\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='-3 -3 0'>\n      <shape onclick=\"changeColor('9')\">\n        <appearance>\n          <material id=\"9\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 -3 0'>\n      <shape onclick=\"changeColor('10')\">\n        <appearance>\n          <material id=\"10\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 -3 0'>\n      <shape onclick=\"changeColor('11')\">\n        <appearance>\n          <material id=\"11\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='-3 0 0'>\n      <shape onclick=\"changeColor('12')\">\n        <appearance>\n          <material id=\"12\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 0 0'>\n      <shape onclick=\"changeColor('13')\">\n        <appearance>\n          <material id=\"13\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 0 0'>\n      <shape onclick=\"changeColor('14')\">\n        <appearance>\n          <material id=\"14\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='-3 3 0'>\n      <shape onclick=\"changeColor('15')\">\n        <appearance>\n          <material id=\"15\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 3 0'>\n      <shape onclick=\"changeColor('16')\">\n        <appearance>\n          <material id=\"16\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 3 0'>\n      <shape onclick=\"changeColor('17')\">\n        <appearance>\n          <material id=\"17\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='-3 -3 3'>\n      <shape onclick=\"changeColor('18')\">\n        <appearance>\n          <material id=\"18\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 -3 3'>\n      <shape onclick=\"changeColor('19')\">\n        <appearance>\n          <material id=\"19\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 -3 3'>\n      <shape onclick=\"changeColor('20')\">\n        <appearance>\n          <material id=\"20\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='-3 0 3'>\n      <shape onclick=\"changeColor('21')\">\n        <appearance>\n          <material id=\"21\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 0 3'>\n      <shape onclick=\"changeColor('22')\">\n        <appearance>\n          <material id=\"22\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 0 3'>\n      <shape onclick=\"changeColor('23')\">\n        <appearance>\n          <material id=\"23\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='-3 3 3'>\n      <shape onclick=\"changeColor('24')\">\n        <appearance>\n          <material id=\"24\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='0 3 3'>\n      <shape onclick=\"changeColor('25')\">\n        <appearance>\n          <material id=\"25\" diffuseColor='0 0 1'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n\n    <transform translation='3 3 3'>\n      <shape onclick=\"changeColor('26')\">\n        <appearance>\n          <material id=\"26\" diffuseColor='1 0 0'></material>\n        </appearance>\n        <box></box>\n      </shape>\n    </transform>\n  </scene>\n</x3d>\n"
+
 exports.component = component
 
-}).call(this,"/")
-},{"fs":2,"path":3}],2:[function(require,module,exports){
-
-},{}],3:[function(require,module,exports){
+},{"path":2}],2:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -241,7 +238,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":4}],4:[function(require,module,exports){
+},{"_process":3}],3:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -251,6 +248,9 @@ var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -334,39 +334,17 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // Cheating npm ^:)
 module.exports = require('../../../../index.js')
 
-},{"../../../../index.js":1}],6:[function(require,module,exports){
+},{"../../../../index.js":1}],5:[function(require,module,exports){
 var Tris3dCanvas = require('tris3d-canvas')
 
 var el = document.createElement('div')
-el.innerHTML=Tris3dCanvas.component
+
+el.innerHTML = Tris3dCanvas.component
+
 document.body.appendChild(el)
-/*
 
-var tris3dCanvas = new Tris3dCanvas(400, 400)
-
-var camera = tris3dCanvas.camera
-var controls = tris3dCanvas.controls
-var board = tris3dCanvas.board
-var renderer = tris3dCanvas.renderer
-var scene = tris3dCanvas.scene
-
-document.body.appendChild(renderer.domElement)
-
-function render () {
-  window.requestAnimationFrame(render)
-
-  controls.update()
-
-  board.cubes[0].mesh.rotation.y += 0.01
-
-  renderer.render(scene, camera)
-}
-
-render()
-*/
-
-},{"tris3d-canvas":5}]},{},[6]);
+},{"tris3d-canvas":4}]},{},[5]);
