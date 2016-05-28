@@ -12,21 +12,21 @@
 
 ## Installation
 
-With [npm][npm] do
+With [npm] do
 
-```
+```bash
 npm install tris3d-canvas
 ```
 
-With [bower][bower] do
+With [bower] do
 
-```
+```bash
 bower install tris3d-canvas
 ```
 
 or use a CDN adding this to your HTML page
 
-```
+```html
 <script src="https://cdn.rawgit.com/fibo/tris3d-canvas/master/dist/tris3d-canvas.min.js"></script>
 ```
 
@@ -34,16 +34,16 @@ or use a CDN adding this to your HTML page
 
 See [online example][online_example] or do the following to serve an example page locally.
 
-Clone repo and install deps with [bower][bower] and [npm][npm]
+Clone repo and install deps with [bower] and [npm]
 
-```
+```bash
 npm install
 bower install
 ```
 
 Run [example/usage.js][example_js] in [example/index.html][example_html] with [budo dev server][budo].
 
-```
+```bash
 npm run example
 ```
 

@@ -1,7 +1,7 @@
 var Tris3dCanvas = require('tris3d-canvas')
 
-var el = document.createElement('div')
+var rootDiv = document.createElement('div')
+rootDiv.id = 'root'
+document.body.appendChild(rootDiv)
 
-el.innerHTML = Tris3dCanvas.component
-
-document.body.appendChild(el)
+Tris3dCanvas(rootDiv)

@@ -1,7 +1,7 @@
 {
   "name": "tris3d-canvas",
   "main": [
-    "component.html"
+    "dist/tris3d-canvas.js"
   ],
   "homepage": "http://g14n.info/tris3d-canvas",
   "authors": [
@@ -30,6 +30,7 @@
     "test"
   ],
   "dependencies": {
-    "x3dom": "^1.7.1"
+    "x3dom": "^1.7.1",
+    "react": "^15.1.0"
   }
 }
