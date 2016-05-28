@@ -1,6 +1,6 @@
 {
   "name": "tris3d-canvas",
-  "description": "is a placeholder to play tic tac toe in 3d",
+  "description": "is a canvas to play tic tac toe in 3d",
   "version": "0.2.0",
   "homepage": "http://g14n.info/tris3d-canvas",
   "author": {
@@ -51,7 +51,6 @@
     "browserify": "^13.0.0",
     "budo": "^8.1.0",
     "standard": "^6.0.7",
-    "tris3d-ai": "^0.1.0",
     "uglify-js": "^2.6.2"
   },
   "dependencies": {
