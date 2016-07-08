@@ -18,47 +18,19 @@ With [npm] do
 npm install tris3d-canvas
 ```
 
-With [bower] do
-
-```bash
-bower install tris3d-canvas
-```
-
-or use a CDN adding this to your HTML page
-
-```html
-<script src="https://cdn.rawgit.com/fibo/tris3d-canvas/master/dist/tris3d-canvas.min.js"></script>
-```
-
 ## Example
 
-See [online example][online_example] or do the following to serve an example page locally.
-
-Clone repo and install deps with [bower] and [npm]
+See [online example][online_example] or do the following to run [example/usage.js][example_js]
 
 ```bash
 npm install
-bower install
+npm start
 ```
-
-Run [example/usage.js][example_js] in [example/index.html][example_html] with [budo dev server][budo].
-
-```bash
-npm run example
-```
-
-You can also:
-
-* open your browser on start: `npm run example -- --open`
-* enable also live reload: `npm run example -- --open --live`
 
 ## License
 
 [MIT](http://g14n.info/mit-license)
 
-[bower]: http://bower.io/
-[budo]: https://github.com/mattdesl/budo
-[example_js]: https://github.com/fibo/tris3d-canvas/blob/master/src/example/usage.js
-[example_html]: https://github.com/fibo/tris3d-canvas/blob/master/src/example/index.html
+[example_js]: https://github.com/fibo/tris3d-canvas/blob/master/example.js
 [npm]: https://npmjs.org/
 [online_example]: http://g14n.info/tris3d-canvas/example
