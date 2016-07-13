@@ -1,8 +1,6 @@
-attribute vec3 aVertexPosition;
+precision mediump float;
+varying vec4 vColor;
 
-uniform mat4 uMVMatrix;
-uniform mat4 uPMatrix;
-
-void main(void) {
-  gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+void main() {
+	gl_FragColor = vColor;
 }

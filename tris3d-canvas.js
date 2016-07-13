@@ -28,8 +28,8 @@ class Tris3dCanvas {
       gl.viewport(0, 0, canvas.width, canvas.height)
 
       var shader = glShader(gl,
-        glslify('./fragment.glsl'),
-        glslify('./vertex.glsl')
+        glslify('./vertex.glsl'),
+        glslify('./fragment.glsl')
       )
     }
   }
