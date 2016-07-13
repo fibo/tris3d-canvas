@@ -1,5 +1,5 @@
-import Tris3dCanvas from './tris3d-canvas'
+import Tris3dCanvas from 'tris3d-canvas'
 
-import ReactDOM from 'react-dom'
+const tris3d = new Tris3dCanvas('demo')
 
-ReactDOM.render(<Tris3dCanvas />, document.getElementById('tris3d-canvas'))
+tris3d.render()

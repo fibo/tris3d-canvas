@@ -20,7 +20,7 @@ npm install tris3d-canvas
 
 ## Example
 
-See [online example][online_example] or do the following to run [example/usage.js][example_js]
+See [online example][online_example] or do the following to run [example.js][example_js]
 
 ```bash
 npm install
