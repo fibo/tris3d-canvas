@@ -1,11 +1,10 @@
 import THREE from 'three'
 import staticProps from 'static-props'
+import OrbitControls from 'three-orbitcontrols'
 
 class Tris3dCanvas {
   constructor (id) {
-    console.log(arguments)
     var canvas = document.getElementById(id)
-      console.log(canvas)
 
     var width = canvas.width
     var height = canvas.height
@@ -23,7 +22,11 @@ class Tris3dCanvas {
 
     var renderer = new THREE.WebGLRenderer({ canvas })
     renderer.setSize(width, height)
-//    document.body.appendChild(renderer.domElement)
+
+    var controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableDamping = true
+    controls.dampingFactor = 0.25
+    controls.enableZoom = false
 
     staticProps(this)({ scene, camera, renderer })
   }

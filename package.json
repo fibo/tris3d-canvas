@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "static-props": "^1.0.0",
-    "three": "^0.78.0"
+    "three": "^0.79.0",
+    "three-orbitcontrols": "github:fibo/three-orbitcontrols"
   }
 }
