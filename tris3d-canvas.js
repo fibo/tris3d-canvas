@@ -1,40 +1,44 @@
-import glShader from 'gl-shader'
-import glslify from 'glslify'
+import THREE from 'three'
+import staticProps from 'static-props'
 
 class Tris3dCanvas {
   constructor (id) {
-    const canvas = document.getElementById(id)
+    console.log(arguments)
+    var canvas = document.getElementById(id)
+      console.log(canvas)
 
-    let gl = null
+    var width = canvas.width
+    var height = canvas.height
 
-    try {
-      // Try to grab the standard context. If it fails, fallback to experimental.
-      gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
-    } catch (ignore) {}
+    var scene = new THREE.Scene()
 
-    // Only continue if WebGL is available and working
-    if (gl) {
-      this.gl = gl
+    var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+    camera.position.z = 5
 
-      // Set clear color to black, fully opaque.
-      gl.clearColor(0.0, 0.0, 0.0, 1.0)
-      // Enable depth testing
-      gl.enable(gl.DEPTH_TEST)
-      // Near things obscure far things.
-      gl.depthFunc(gl.LEQUAL)
-      // Clear the color as well as the depth buffer.
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-      // Set the viewport.
-      gl.viewport(0, 0, canvas.width, canvas.height)
+    var geometry = new THREE.BoxGeometry(1, 1, 1)
+    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
 
-      var shader = glShader(gl,
-        glslify('./vertex.glsl'),
-        glslify('./fragment.glsl')
-      )
-    }
+    var cube = new THREE.Mesh(geometry, material)
+    scene.add(cube)
+
+    var renderer = new THREE.WebGLRenderer({ canvas })
+    renderer.setSize(width, height)
+//    document.body.appendChild(renderer.domElement)
+
+    staticProps(this)({ scene, camera, renderer })
   }
+
   render () {
-    console.log(this.gl)
+    const renderer = this.renderer
+    const scene = this.scene
+    const camera = this.camera
+
+    function loop () {
+      window.requestAnimationFrame(loop)
+      renderer.render(scene, camera)
+    }
+
+    loop() // oh yeah!
   }
 }
 
