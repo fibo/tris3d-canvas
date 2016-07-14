@@ -10,7 +10,7 @@
   "license": "MIT",
   "main": "tris3d-canvas.js",
   "scripts": {
-    "build": "npm run browserify",
+    "build": "npm run browserify && npm run jekyll",
     "browserify": "NODE_PATH=. browserify example.js -t babelify -o gh-pages/example/bundle.js",
     "check-deps": "npm outdated",
     "cp_package.json": "cp package.json gh-pages/_data/",
@@ -18,7 +18,7 @@
     "gh-pages_push": "git subtree --prefix gh-pages push origin gh-pages",
     "gh-pages_pull": "git subtree --prefix gh-pages pull origin gh-pages",
     "homepage": "echo \"---\ntitle: $npm_package_name\n---\" > gh-pages/index.md; cat README.md >> gh-pages/index.md",
-    "jekyll": "npm run gh-pages_data; npm run homepage; cd gh-pages; jekyll build; cd ..",
+    "jekyll": "npm run gh-pages_data; npm run cp_package.json; npm run homepage; cd gh-pages; jekyll build; cd ..",
     "lint": "standard",
     "postupdate-deps": "npm test && git commit -am ':arrow_up: updated deps' || git checkout -- package.json",
     "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
