@@ -1,6 +1,6 @@
-import THREE from 'three'
-import staticProps from 'static-props'
-import OrbitControls from 'three-orbitcontrols'
+const THREE = require('three')
+const staticProps = require('static-props')
+const OrbitControls = require('three-orbitcontrols')
 
 class Tris3dCanvas {
   constructor (id) {
