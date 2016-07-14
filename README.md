@@ -6,7 +6,7 @@
 [Example](#example) |
 [License](#license)
 
-[![NPM version](https://badge.fury.io/js/tris3d-canvas.svg)](http://badge.fury.io/js/tris3d-canvas) [![Dependency Status](https://gemnasium.com/fibo/tris3d-canvas.svg)](https://gemnasium.com/fibo/tris3d-canvas) [![Change log](https://img.shields.io/badge/change-log-blue.svg)](http://g14n.info/tris3d-canvas/changelog)
+[![NPM version](https://badge.fury.io/js/tris3d-canvas.svg)](http://badge.fury.io/js/tris3d-canvas) [![Dependency Status](https://gemnasium.com/fibo/tris3d-canvas.svg)](https://gemnasium.com/fibo/tris3d-canvas)
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
