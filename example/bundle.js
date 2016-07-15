@@ -42869,6 +42869,7 @@ var Tris3dCanvas = function () {
     _classCallCheck(this, Tris3dCanvas);
 
     var canvas = document.getElementById(id);
+    var cellSize = 1.7;
 
     var width = canvas.width;
     var height = canvas.height;
@@ -42876,13 +42877,35 @@ var Tris3dCanvas = function () {
     var scene = new THREE.Scene();
 
     var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.z = 5;
+    camera.position.z = 7.1;
 
-    var geometry = new THREE.BoxGeometry(1, 1, 1);
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    // Create 3x3x3 cubes
 
-    var cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    var cubes = [];
+
+    var neutral = {
+      color: 0x00bb11,
+      opacity: 0.17,
+      transparent: true
+    };
+
+    for (var i = -1; i < 2; i++) {
+      for (var j = -1; j < 2; j++) {
+        for (var k = -1; k < 2; k++) {
+          var geometry = new THREE.BoxGeometry(1, 1, 1);
+          var material = new THREE.MeshBasicMaterial(neutral);
+
+          var cube = new THREE.Mesh(geometry, material);
+          cubes.push(cube);
+
+          cube.position.x = i * cellSize;
+          cube.position.y = j * cellSize;
+          cube.position.z = k * cellSize;
+
+          scene.add(cube);
+        }
+      }
+    }
 
     var renderer = new THREE.WebGLRenderer({ canvas: canvas });
     renderer.setSize(width, height);
@@ -42901,6 +42924,7 @@ var Tris3dCanvas = function () {
       var renderer = this.renderer;
       var scene = this.scene;
       var camera = this.camera;
+
 
       function loop() {
         window.requestAnimationFrame(loop);
