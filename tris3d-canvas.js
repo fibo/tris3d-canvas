@@ -51,7 +51,33 @@ class Tris3dCanvas {
     controls.dampingFactor = 0.25
     controls.enableZoom = false
 
-    staticProps(this)({ scene, camera, renderer })
+    // Finally, add attributes.
+
+    staticProps(this)({ canvas, scene, camera, renderer })
+  }
+
+  disablePicking () {
+    // TODO
+  }
+
+  enablePicking () {
+    // TODO
+    // copy from https://github.com/fibo/tris3d.jit.su/blob/master/src/Tris3dView.js
+
+    const { canvas } = this
+
+    const getEventCoords = (ev) => ({
+      x: (ev.offsetX || ev.clientX - canvas.offsetLeft),
+      y: (ev.offsetY || ev.clientY - canvas.offsetTop)
+    })
+
+    const selectPickedCube = (ev) => {
+      console.log(THREE.Raycaster)
+
+      console.log(getEventCoords(ev))
+    }
+
+    canvas.addEventListener('mousedown', selectPickedCube)
   }
 
   render () {
