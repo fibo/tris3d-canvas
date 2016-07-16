@@ -15,6 +15,9 @@ class Tris3dCanvas {
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
     camera.position.z = 7.1
 
+    const rayCaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2()
+
     // Create 3x3x3 cubes
 
     let cubes = []
@@ -45,6 +48,7 @@ class Tris3dCanvas {
 
     const renderer = new THREE.WebGLRenderer({ canvas })
     renderer.setSize(width, height)
+    renderer.setClearColor(0xeeeeee, 1)
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
@@ -53,35 +57,60 @@ class Tris3dCanvas {
 
     // Finally, add attributes.
 
-    staticProps(this)({ canvas, scene, camera, renderer })
+    staticProps(this)({
+      camera,
+      canvas,
+      cubes,
+      pointer,
+      scene,
+      rayCaster,
+      renderer
+    })
   }
 
   disablePicking () {
     // TODO
   }
 
-  enablePicking () {
-    // TODO
-    // copy from https://github.com/fibo/tris3d.jit.su/blob/master/src/Tris3dView.js
+  getEventCoords (event) {
+    const { canvas, pointer } = this
 
+    pointer.x = (event.clientX / canvas.width) * 2 - 1
+    pointer.y = - (event.clientY / canvas.height) * 2 - 1
+
+    console.log(pointer.x, pointer.y)
+  }
+
+  enablePicking () {
     const { canvas } = this
 
-    const getEventCoords = (ev) => ({
-      x: (ev.offsetX || ev.clientX - canvas.offsetLeft),
-      y: (ev.offsetY || ev.clientY - canvas.offsetTop)
-    })
+    const selectPickedCube = this.selectPickedCube.bind(this)
 
-    const selectPickedCube = (ev) => {
-      console.log(THREE.Raycaster)
+    // TODO canvas.addEventListener('mousedown', selectPickedCube)
+    canvas.addEventListener('mousemove', getEventCoords)
+    // TODO pick object after 1 second holding mousedown
+    // in the mean time the object rotates or gives a feedback
+  }
 
-      console.log(getEventCoords(ev))
-    }
+  selectPickedCube (event) {
+    // Code from here http://stackoverflow.com/questions/29366109/three-js-three-projector-has-been-moved-to
 
-    canvas.addEventListener('mousedown', selectPickedCube)
+    const { camera, cubes, rayCaster, renderer } = this
+
+    pointer.x = (event.clientX / renderer.domElement.width) * 2 - 1
+    pointer.y = - (event.clientY / renderer.domElement.height) * 2 - 1
+
+    rayCaster.setFromCamera(pointer, camera)
+
+    const intersects = rayCaster.intersectObjects(cubes)
+    console.log(intersects)
   }
 
   render () {
-    const { renderer, scene, camera } = this
+    const { camera, renderer, scene } = this
+
+    // TODO Like http://threejs.org/docs/api/core/Raycaster.html
+    // calculate picking to give feedback to user
 
     function loop () {
       window.requestAnimationFrame(loop)
