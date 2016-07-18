@@ -16,7 +16,9 @@ class Tris3dCanvas {
     camera.position.z = 7.1
 
     const rayCaster = new THREE.Raycaster()
-    const pointer = new THREE.Vector2()
+    // Initialize pointer with coordinates outside of the screen,
+    // otherwise the center cube will result as selected on start.
+    const pointer = new THREE.Vector2(10, 10)
 
     // Create 3x3x3 cubes
 
@@ -46,14 +48,40 @@ class Tris3dCanvas {
       }
     }
 
+    // Create renderer.
+
     const renderer = new THREE.WebGLRenderer({ canvas })
     renderer.setSize(width, height)
-    renderer.setClearColor(0xeeeeee, 1)
+    renderer.setClearColor(0xeeeeee)
+    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.sortObjects = false
+
+    // Navigation controls.
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
     controls.dampingFactor = 0.25
     controls.enableZoom = false
+
+    // Init event listeners.
+
+    function onMouseMove (event) {
+      event.preventDefault()
+
+      pointer.x = (event.clientX / canvas.width) * 2 - 1
+      pointer.y = -(event.clientY / canvas.height) * 2 + 1
+    }
+
+    canvas.addEventListener('mousemove', onMouseMove, false)
+
+    function onResize () {
+      camera.aspect = canvas.width / canvas.height
+      camera.updateProjectionMatrix()
+
+      renderer.setSize(canvas.width, canvas.height)
+    }
+
+    canvas.addEventListener('resize', onResize, false)
 
     // Finally, add attributes.
 
@@ -68,53 +96,50 @@ class Tris3dCanvas {
     })
   }
 
-  disablePicking () {
-    // TODO
-  }
-
-  getEventCoords (event) {
-    const { canvas, pointer } = this
-
-    pointer.x = (event.clientX / canvas.width) * 2 - 1
-    pointer.y = - (event.clientY / canvas.height) * 2 - 1
-
-    console.log(pointer.x, pointer.y)
-  }
-
-  enablePicking () {
-    const { canvas } = this
-
-    const selectPickedCube = this.selectPickedCube.bind(this)
-
-    // TODO canvas.addEventListener('mousedown', selectPickedCube)
-    canvas.addEventListener('mousemove', getEventCoords)
-    // TODO pick object after 1 second holding mousedown
-    // in the mean time the object rotates or gives a feedback
-  }
-
-  selectPickedCube (event) {
-    // Code from here http://stackoverflow.com/questions/29366109/three-js-three-projector-has-been-moved-to
-
-    const { camera, cubes, rayCaster, renderer } = this
-
-    pointer.x = (event.clientX / renderer.domElement.width) * 2 - 1
-    pointer.y = - (event.clientY / renderer.domElement.height) * 2 - 1
-
-    rayCaster.setFromCamera(pointer, camera)
-
-    const intersects = rayCaster.intersectObjects(cubes)
-    console.log(intersects)
-  }
-
   render () {
-    const { camera, renderer, scene } = this
+    const {
+      camera,
+      cubes,
+      pointer,
+      rayCaster,
+      renderer,
+      scene
+    } = this
 
-    // TODO Like http://threejs.org/docs/api/core/Raycaster.html
-    // calculate picking to give feedback to user
+    // TODO needed to rotate the camera
+    // let theta = 0
+    let selectedCube = null
 
     function loop () {
-      window.requestAnimationFrame(loop)
+      // TODO The code below is works and can be used to rotate the camera
+      //      when the game is over.
+      // theta += 0.1
+      // camera.position.x = 10 * Math.sin(THREE.Math.degToRad(theta))
+      // camera.position.y = 10 * Math.sin(THREE.Math.degToRad(theta))
+      // camera.position.z = 10 * Math.cos(THREE.Math.degToRad(theta))
+      // camera.lookAt(scene.position)
+      // camera.updateMatrixWorld()
+
+      // Find intersected objects.
+
+      rayCaster.setFromCamera(pointer, camera)
+      const intersects = rayCaster.intersectObjects(cubes)
+
+      if (intersects.length > 0) {
+        if (selectedCube !== intersects[0].object) {
+          if (selectedCube) selectedCube.material.opacity = 0.17
+
+          selectedCube = intersects[0].object
+          selectedCube.material.opacity = 0.71
+        }
+      } else {
+        if (selectedCube) selectedCube.material.opacity = 0.17
+        selectedCube = null
+      }
+
       renderer.render(scene, camera)
+
+      window.requestAnimationFrame(loop)
     }
 
     loop() // oh yeah!
