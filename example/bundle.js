@@ -11,8 +11,6 @@ var tris3dCanvas = new _tris3dCanvas2.default('demo');
 
 tris3dCanvas.render();
 
-tris3dCanvas.enablePicking();
-
 },{"tris3d-canvas":5}],2:[function(require,module,exports){
 /**
  * @param {Object} obj
@@ -42882,7 +42880,9 @@ var Tris3dCanvas = function () {
     camera.position.z = 7.1;
 
     var rayCaster = new THREE.Raycaster();
-    var pointer = new THREE.Vector2();
+    // Initialize pointer with coordinates outside of the screen,
+    // otherwise the center cube will result as selected on start.
+    var pointer = new THREE.Vector2(10, 10);
 
     // Create 3x3x3 cubes
 
@@ -42912,14 +42912,40 @@ var Tris3dCanvas = function () {
       }
     }
 
+    // Create renderer.
+
     var renderer = new THREE.WebGLRenderer({ canvas: canvas });
     renderer.setSize(width, height);
-    renderer.setClearColor(0xeeeeee, 1);
+    renderer.setClearColor(0xeeeeee);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.sortObjects = false;
+
+    // Navigation controls.
 
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
     controls.enableZoom = false;
+
+    // Init event listeners.
+
+    function onMouseMove(event) {
+      event.preventDefault();
+
+      pointer.x = event.clientX / canvas.width * 2 - 1;
+      pointer.y = -(event.clientY / canvas.height) * 2 + 1;
+    }
+
+    canvas.addEventListener('mousemove', onMouseMove, false);
+
+    function onResize() {
+      camera.aspect = canvas.width / canvas.height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(canvas.width, canvas.height);
+    }
+
+    canvas.addEventListener('resize', onResize, false);
 
     // Finally, add attributes.
 
@@ -42935,67 +42961,50 @@ var Tris3dCanvas = function () {
   }
 
   _createClass(Tris3dCanvas, [{
-    key: 'disablePicking',
-    value: function disablePicking() {
-      // TODO
-    }
-  }, {
-    key: 'getEventCoords',
-    value: function getEventCoords(event) {
-      var canvas = this.canvas;
-      var pointer = this.pointer;
-
-
-      pointer.x = event.clientX / canvas.width * 2 - 1;
-      pointer.y = -(event.clientY / canvas.height) * 2 - 1;
-
-      console.log(pointer.x, pointer.y);
-    }
-  }, {
-    key: 'enablePicking',
-    value: function enablePicking() {
-      var canvas = this.canvas;
-
-
-      var selectPickedCube = this.selectPickedCube.bind(this);
-
-      // TODO canvas.addEventListener('mousedown', selectPickedCube)
-      canvas.addEventListener('mousemove', getEventCoords);
-      // TODO pick object after 1 second holding mousedown
-      // in the mean time the object rotates or gives a feedback
-    }
-  }, {
-    key: 'selectPickedCube',
-    value: function selectPickedCube(event) {
-      // Code from here http://stackoverflow.com/questions/29366109/three-js-three-projector-has-been-moved-to
-
-      var camera = this.camera;
-      var cubes = this.cubes;
-      var rayCaster = this.rayCaster;
-      var renderer = this.renderer;
-
-
-      pointer.x = event.clientX / renderer.domElement.width * 2 - 1;
-      pointer.y = -(event.clientY / renderer.domElement.height) * 2 - 1;
-
-      rayCaster.setFromCamera(pointer, camera);
-
-      var intersects = rayCaster.intersectObjects(cubes);
-      console.log(intersects);
-    }
-  }, {
     key: 'render',
     value: function render() {
       var camera = this.camera;
+      var cubes = this.cubes;
+      var pointer = this.pointer;
+      var rayCaster = this.rayCaster;
       var renderer = this.renderer;
       var scene = this.scene;
 
-      // TODO Like http://threejs.org/docs/api/core/Raycaster.html
-      // calculate picking to give feedback to user
+      // TODO needed to rotate the camera
+      // let theta = 0
+
+      var selectedCube = null;
 
       function loop() {
-        window.requestAnimationFrame(loop);
+        // TODO The code below is works and can be used to rotate the camera
+        //      when the game is over.
+        // theta += 0.1
+        // camera.position.x = 10 * Math.sin(THREE.Math.degToRad(theta))
+        // camera.position.y = 10 * Math.sin(THREE.Math.degToRad(theta))
+        // camera.position.z = 10 * Math.cos(THREE.Math.degToRad(theta))
+        // camera.lookAt(scene.position)
+        // camera.updateMatrixWorld()
+
+        // Find intersected objects.
+
+        rayCaster.setFromCamera(pointer, camera);
+        var intersects = rayCaster.intersectObjects(cubes);
+
+        if (intersects.length > 0) {
+          if (selectedCube !== intersects[0].object) {
+            if (selectedCube) selectedCube.material.opacity = 0.17;
+
+            selectedCube = intersects[0].object;
+            selectedCube.material.opacity = 0.71;
+          }
+        } else {
+          if (selectedCube) selectedCube.material.opacity = 0.17;
+          selectedCube = null;
+        }
+
         renderer.render(scene, camera);
+
+        window.requestAnimationFrame(loop);
       }
 
       loop(); // oh yeah!
