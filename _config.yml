@@ -16,7 +16,7 @@ defaults:
       path: ""
       type: "pages"
     values:
-      layout: responsive-side-menu
+      layout: common/responsive-side-menu
 
 # Custom vars
 
