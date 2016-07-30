@@ -42871,6 +42871,8 @@ var Tris3dCanvas = function () {
     // Get canvas, its offset, width and height
 
     var canvas = document.getElementById(id);
+    // TODO find a relyable method to compute offset, this one works
+    //      but in some cases don't.
     var offset = canvas.parentNode.getBoundingClientRect();
     var width = canvas.width;
     var height = canvas.height;
@@ -42934,7 +42936,8 @@ var Tris3dCanvas = function () {
 
     function onMouseMove(event) {
       event.preventDefault();
-      event.stopPropagation();
+      // Cannot call ``event.stopPropagation()``
+      // otherwise the orbit control does not work.
 
       var x = event.clientX - offset.left;
       var y = event.clientY - offset.top;
@@ -42945,14 +42948,14 @@ var Tris3dCanvas = function () {
 
     canvas.addEventListener('mousemove', onMouseMove, false);
 
-    function onResize() {
-      camera.aspect = canvas.width / canvas.height;
-      camera.updateProjectionMatrix();
-
-      renderer.setSize(canvas.width, canvas.height);
+    /* TODO try this code for resize. How to trigger resize event?
+    function onResize () {
+      camera.aspect = canvas.width / canvas.height
+      camera.updateProjectionMatrix()
+      renderer.setSize(canvas.width, canvas.height)
     }
-
-    canvas.addEventListener('resize', onResize, false);
+     canvas.addEventListener('resize', onResize, false)
+    */
 
     // Finally, add attributes.
 
