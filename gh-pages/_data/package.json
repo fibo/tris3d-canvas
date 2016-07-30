@@ -8,7 +8,7 @@
     "url": "http://g14n.info"
   },
   "license": "MIT",
-  "main": "tris3d-canvas.js",
+  "main": "index.js",
   "scripts": {
     "babel": "babel tris3d-canvas.js -o index.js",
     "build": "NODE_ENV=production npm run babel && npm run browserify && npm run jekyll",
@@ -20,7 +20,7 @@
     "gh-pages_pull": "git subtree --prefix gh-pages pull origin gh-pages",
     "homepage": "echo \"---\ntitle: $npm_package_name\n---\" > gh-pages/index.md; cat README.md >> gh-pages/index.md",
     "jekyll": "npm run gh-pages_data; npm run cp_package.json; npm run homepage; cd gh-pages; jekyll build; cd ..",
-    "lint": "standard",
+    "lint": "standard example.js tris3d-canvas.js",
     "postupdate-deps": "npm test && git commit -am ':arrow_up: updated deps' || git checkout -- package.json",
     "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
     "push": "git push origin master && npm run gh-pages_push",

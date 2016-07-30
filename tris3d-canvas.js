@@ -4,11 +4,14 @@ const OrbitControls = require('three-orbitcontrols')
 
 class Tris3dCanvas {
   constructor (id) {
-    const canvas = document.getElementById(id)
-    const cellSize = 1.7
+    // Get canvas, its offset, width and height
 
+    const canvas = document.getElementById(id)
+    let offset = canvas.parentNode.getBoundingClientRect()
     const width = canvas.width
     const height = canvas.height
+
+    const cellSize = 1.7
 
     const scene = new THREE.Scene()
 
@@ -67,9 +70,13 @@ class Tris3dCanvas {
 
     function onMouseMove (event) {
       event.preventDefault()
+      event.stopPropagation()
 
-      pointer.x = (event.clientX / canvas.width) * 2 - 1
-      pointer.y = -(event.clientY / canvas.height) * 2 + 1
+      const x = event.clientX - offset.left
+      const y = event.clientY - offset.top
+
+      pointer.x = (x / canvas.width) * 2 - 1
+      pointer.y = -(y / canvas.height) * 2 + 1
     }
 
     canvas.addEventListener('mousemove', onMouseMove, false)
