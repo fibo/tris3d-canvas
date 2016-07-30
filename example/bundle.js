@@ -42868,11 +42868,14 @@ var Tris3dCanvas = function () {
   function Tris3dCanvas(id) {
     _classCallCheck(this, Tris3dCanvas);
 
-    var canvas = document.getElementById(id);
-    var cellSize = 1.7;
+    // Get canvas, its offset, width and height
 
+    var canvas = document.getElementById(id);
+    var offset = canvas.parentNode.getBoundingClientRect();
     var width = canvas.width;
     var height = canvas.height;
+
+    var cellSize = 1.7;
 
     var scene = new THREE.Scene();
 
@@ -42931,9 +42934,13 @@ var Tris3dCanvas = function () {
 
     function onMouseMove(event) {
       event.preventDefault();
+      event.stopPropagation();
 
-      pointer.x = event.clientX / canvas.width * 2 - 1;
-      pointer.y = -(event.clientY / canvas.height) * 2 + 1;
+      var x = event.clientX - offset.left;
+      var y = event.clientY - offset.top;
+
+      pointer.x = x / canvas.width * 2 - 1;
+      pointer.y = -(y / canvas.height) * 2 + 1;
     }
 
     canvas.addEventListener('mousemove', onMouseMove, false);
