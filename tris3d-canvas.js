@@ -39,7 +39,7 @@ class Tris3dCanvas {
 
     // Default material.
     const neutral = {
-      color: 0x00bb11,
+      color: 0x000000,
       opacity: 0.17,
       transparent: true
     }
@@ -140,9 +140,9 @@ class Tris3dCanvas {
     this.selectedCube = null
 
     const playerColors = [
-      0x00bb11,
-      0xbb0011,
-      0x11bb00
+      0xff0000,
+      0x00ff00,
+      0x0000ff
     ]
 
     staticProps(this)({
@@ -203,16 +203,17 @@ class Tris3dCanvas {
    */
 
   setChoice (playerIndex, cubeIndex) {
-    var playerIndex = this.playerIndex
+    // Store player choice.
     this.choices.push(cubeIndex)
 
-    // playerIndex = (playerIndex + 1) % 3
+    var playerIndex = this.playerIndex
 
-    this.playerIndex = playerIndex
+    // Set chosen cube color.
+    const color = this.playerColors[playerIndex]
+    this.cubes[cubeIndex].material.color.setHex(color)
 
-    // TODO this.cubes[cubeIndex].material.color = this.playerColors[playerIndex]
-    console.log(playerIndex, cubeIndex)
-    console.log(this.playerIndex, this.choices)
+    // Next turn to play.
+    this.playerIndex = (playerIndex + 1) % 3
   }
 }
 
