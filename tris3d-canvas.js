@@ -12,7 +12,8 @@ class Tris3dCanvas {
    */
 
   constructor (id) {
-    // Get canvas, its offset, width and height
+    // Get canvas, its offset, width and height.
+    // //////////////////////////////////////////////////////////////////////
 
     const canvas = document.getElementById(id)
     var offsetLeft = canvas.offsetLeft
@@ -27,10 +28,16 @@ class Tris3dCanvas {
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
     camera.position.z = 7.1
 
-    // Create 3x3x3 cubes
+    // Create 3x3x3 cubes.
+    // //////////////////////////////////////////////////////////////////////
 
+    // The 3d cubes array.
     var cubes = []
 
+    // Remember (mesh cube) <--> (cell) association, using cube uuids.
+    var cellUuids = []
+
+    // Default material.
     const neutral = {
       color: 0x00bb11,
       opacity: 0.17,
@@ -51,11 +58,14 @@ class Tris3dCanvas {
           cube.position.z = k * cellSize
 
           scene.add(cube)
+
+          cellUuids.push(cube.uuid)
         }
       }
     }
 
     // Create renderer.
+    // //////////////////////////////////////////////////////////////////////
 
     const renderer = new THREE.WebGLRenderer({ canvas })
     renderer.setSize(width, height)
@@ -64,6 +74,7 @@ class Tris3dCanvas {
     renderer.sortObjects = false
 
     // Navigation controls.
+    // //////////////////////////////////////////////////////////////////////
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
@@ -71,6 +82,22 @@ class Tris3dCanvas {
     controls.enableZoom = false
 
     // Init event listeners.
+    // //////////////////////////////////////////////////////////////////////
+
+    function onMouseDown (event) {
+      event.preventDefault()
+
+      if (this.isPlaying) {
+        const currentPlayerIndex = this.currentPlayerIndex
+        const playerIndex = this.playerIndex
+        const selectedCube = this.selectedCube
+
+        if (selectedCube && (playerIndex === currentPlayerIndex)) {
+          var cubeIndex = cellUuids.indexOf(selectedCube.uuid)
+          this.setChoice(playerIndex, cubeIndex)
+        }
+      }
+    }
 
     function onMouseMove (event) {
       event.preventDefault()
@@ -81,7 +108,6 @@ class Tris3dCanvas {
 
       var x = (event.offsetX || event.clientX - offsetLeft)
       var y = (event.offsetY || event.clientY - offsetTop)
-
 
       var vector = new THREE.Vector3(
         (x / width) * 2 - 1,
@@ -102,32 +128,51 @@ class Tris3dCanvas {
     }
 
     canvas.addEventListener('mousemove', onMouseMove.bind(this), false)
+    canvas.addEventListener('mousedown', onMouseDown.bind(this), false)
 
     // Finally, add attributes.
+    // //////////////////////////////////////////////////////////////////////
 
+    this.choices = []
+    this.currentPlayerIndex = 0
+    this.isPlaying = true
+    this.playerIndex = 0
     this.selectedCube = null
+
+    const playerColors = [
+      0x00bb11,
+      0xbb0011,
+      0x11bb00
+    ]
 
     staticProps(this)({
       camera,
       canvas,
       cubes,
+      playerColors,
       scene,
       renderer
     })
   }
+
+  /**
+   * Start rendering the 3d scene.
+   */
 
   render () {
     const self = this
 
     const {
       camera,
-      cubes,
       renderer,
       scene
     } = this
 
     var previousSelectedCube = null
     var selectedCube = null
+
+    // The main 3d loop.
+    // //////////////////////////////////////////////////////////////////////
 
     function loop () {
       previousSelectedCube = selectedCube
@@ -151,6 +196,23 @@ class Tris3dCanvas {
     }
 
     loop() // Oh yeah!
+  }
+
+  /**
+   * Set player choice.
+   */
+
+  setChoice (playerIndex, cubeIndex) {
+    var playerIndex = this.playerIndex
+    this.choices.push(cubeIndex)
+
+    // playerIndex = (playerIndex + 1) % 3
+
+    this.playerIndex = playerIndex
+
+    // TODO this.cubes[cubeIndex].material.color = this.playerColors[playerIndex]
+    console.log(playerIndex, cubeIndex)
+    console.log(this.playerIndex, this.choices)
   }
 }
 
