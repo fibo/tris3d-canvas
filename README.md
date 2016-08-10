@@ -4,9 +4,11 @@
 
 [Installation](#installation) |
 [Example](#example) |
+[API](#api) |
 [License](#license)
 
-[![NPM version](https://badge.fury.io/js/tris3d-canvas.svg)](http://badge.fury.io/js/tris3d-canvas) [![Dependency Status](https://gemnasium.com/fibo/tris3d-canvas.svg)](https://gemnasium.com/fibo/tris3d-canvas)
+[![NPM version](https://badge.fury.io/js/tris3d-canvas.svg)](http://badge.fury.io/js/tris3d-canvas)
+[![Dependency Status](https://gemnasium.com/fibo/tris3d-canvas.svg)](https://gemnasium.com/fibo/tris3d-canvas)
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 
@@ -26,6 +28,40 @@ See [online example][online_example] or do the following to run [example.js][exa
 npm install
 npm start
 ```
+
+## API
+
+### `const tris3dCanvas = new Tris3dCanvas(canvasId)`
+
+> Constructor to create an instance of Tris3dCanvas.
+
+Create a canvas with attributes `id`, `width` and `height`
+
+```html
+<canvas id="demo" width="500" height="500"></canvas>
+```
+
+Then create a Tris3dCanvas object
+
+```javascript
+const tris3dCanvas = new Tris3dCanvas('demo')
+```
+
+### `tris3dCanvas.on('nextPlayer', (playerIndex) => {})`
+
+> Listen to *nextPlayer* event.
+
+### `tris3dCanvas.on('setChoice', (cubeIndex) => {})`
+
+> Listen to *setChoice* event.
+
+### `tris3dCanvas.render()`
+
+> Start rendering the 3d scene.
+
+### `tris3dCanvas.setChoice(playerIndex, cubeIndex)`
+
+> Set player choice.
 
 ## License
 

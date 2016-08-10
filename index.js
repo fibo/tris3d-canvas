@@ -13,15 +13,23 @@ var staticProps = require('static-props');
 var OrbitControls = require('three-orbitcontrols');
 
 var Tris3dCanvas = function () {
+  /**
+   * Create a tris3d canvas
+   *
+   * @param {String} id of canvas element
+   *
+   * @constructor
+   */
+
   function Tris3dCanvas(id) {
     _classCallCheck(this, Tris3dCanvas);
 
-    // Get canvas, its offset, width and height
+    // Get canvas, its offset, width and height.
+    // //////////////////////////////////////////////////////////////////////
 
     var canvas = document.getElementById(id);
-    // TODO find a relyable method to compute offset, this one works
-    //      but in some cases don't.
-    var offset = canvas.parentNode.getBoundingClientRect();
+    var offsetLeft = canvas.offsetLeft;
+    var offsetTop = canvas.offsetTop;
     var width = canvas.width;
     var height = canvas.height;
 
@@ -32,17 +40,18 @@ var Tris3dCanvas = function () {
     var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.z = 7.1;
 
-    var rayCaster = new THREE.Raycaster();
-    // Initialize pointer with coordinates outside of the screen,
-    // otherwise the center cube will result as selected on start.
-    var pointer = new THREE.Vector2(10, 10);
+    // Create 3x3x3 cubes.
+    // //////////////////////////////////////////////////////////////////////
 
-    // Create 3x3x3 cubes
-
+    // The 3d cubes array.
     var cubes = [];
 
+    // Remember (mesh cube) <--> (cell) association, using cube uuids.
+    var cellUuids = [];
+
+    // Default material.
     var neutral = {
-      color: 0x00bb11,
+      color: 0x000000,
       opacity: 0.17,
       transparent: true
     };
@@ -61,11 +70,14 @@ var Tris3dCanvas = function () {
           cube.position.z = k * cellSize;
 
           scene.add(cube);
+
+          cellUuids.push(cube.uuid);
         }
       }
     }
 
     // Create renderer.
+    // //////////////////////////////////////////////////////////////////////
 
     var renderer = new THREE.WebGLRenderer({ canvas: canvas });
     renderer.setSize(width, height);
@@ -74,6 +86,7 @@ var Tris3dCanvas = function () {
     renderer.sortObjects = false;
 
     // Navigation controls.
+    // //////////////////////////////////////////////////////////////////////
 
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -81,83 +94,105 @@ var Tris3dCanvas = function () {
     controls.enableZoom = false;
 
     // Init event listeners.
+    // //////////////////////////////////////////////////////////////////////
+
+    function onMouseDown(event) {
+      event.preventDefault();
+
+      if (this.isPlaying) {
+        var currentPlayerIndex = this.currentPlayerIndex;
+        var playerIndex = this.playerIndex;
+        var selectedCube = this.selectedCube;
+
+        if (selectedCube && playerIndex === currentPlayerIndex) {
+          var cubeIndex = cellUuids.indexOf(selectedCube.uuid);
+          this.setChoice(playerIndex, cubeIndex);
+        }
+      }
+    }
 
     function onMouseMove(event) {
       event.preventDefault();
-      // Cannot call ``event.stopPropagation()``
+      // Cannot call `event.stopPropagation()`,
       // otherwise the orbit control does not work.
 
-      var x = event.clientX - offset.left;
-      var y = event.clientY - offset.top;
+      // Find intersected cubes.
 
-      pointer.x = x / canvas.width * 2 - 1;
-      pointer.y = -(y / canvas.height) * 2 + 1;
+      var x = event.offsetX || event.clientX - offsetLeft;
+      var y = event.offsetY || event.clientY - offsetTop;
+
+      var vector = new THREE.Vector3(x / width * 2 - 1, -(y / height) * 2 + 1, 1);
+
+      vector.unproject(camera);
+
+      var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+      var intersectedCubes = ray.intersectObjects(cubes);
+
+      if (intersectedCubes.length > 0) {
+        this.selectedCube = intersectedCubes[0].object;
+      } else {
+        this.selectedCube = null;
+      }
     }
 
-    canvas.addEventListener('mousemove', onMouseMove, false);
-
-    /* TODO try this code for resize. How to trigger resize event?
-    function onResize () {
-      camera.aspect = canvas.width / canvas.height
-      camera.updateProjectionMatrix()
-      renderer.setSize(canvas.width, canvas.height)
-    }
-     canvas.addEventListener('resize', onResize, false)
-    */
+    canvas.addEventListener('mousemove', onMouseMove.bind(this), false);
+    canvas.addEventListener('mousedown', onMouseDown.bind(this), false);
 
     // Finally, add attributes.
+    // //////////////////////////////////////////////////////////////////////
+
+    this.choices = [];
+    this.currentPlayerIndex = 0;
+    this.isPlaying = true;
+    this.playerIndex = 0;
+    this.selectedCube = null;
+
+    var playerColors = [0xff0000, 0x00ff00, 0x0000ff];
 
     staticProps(this)({
       camera: camera,
       canvas: canvas,
       cubes: cubes,
-      pointer: pointer,
+      playerColors: playerColors,
       scene: scene,
-      rayCaster: rayCaster,
       renderer: renderer
     });
   }
 
+  /**
+   * Start rendering the 3d scene.
+   */
+
   _createClass(Tris3dCanvas, [{
     key: 'render',
     value: function render() {
+      var self = this;
+
       var camera = this.camera;
-      var cubes = this.cubes;
-      var pointer = this.pointer;
-      var rayCaster = this.rayCaster;
       var renderer = this.renderer;
       var scene = this.scene;
 
-      // TODO needed to rotate the camera
-      // let theta = 0
 
+      var previousSelectedCube = null;
       var selectedCube = null;
 
+      // The main 3d loop.
+      // //////////////////////////////////////////////////////////////////////
+
       function loop() {
-        // TODO The code below is works and can be used to rotate the camera
-        //      when the game is over.
-        // theta += 0.1
-        // camera.position.x = 10 * Math.sin(THREE.Math.degToRad(theta))
-        // camera.position.y = 10 * Math.sin(THREE.Math.degToRad(theta))
-        // camera.position.z = 10 * Math.cos(THREE.Math.degToRad(theta))
-        // camera.lookAt(scene.position)
-        // camera.updateMatrixWorld()
+        previousSelectedCube = selectedCube;
+        selectedCube = self.selectedCube;
 
-        // Find intersected objects.
-
-        rayCaster.setFromCamera(pointer, camera);
-        var intersects = rayCaster.intersectObjects(cubes);
-
-        if (intersects.length > 0) {
-          if (selectedCube !== intersects[0].object) {
-            if (selectedCube) selectedCube.material.opacity = 0.17;
-
-            selectedCube = intersects[0].object;
+        if (selectedCube) {
+          if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
+            previousSelectedCube.material.opacity = 0.17;
+          } else {
             selectedCube.material.opacity = 0.71;
           }
         } else {
-          if (selectedCube) selectedCube.material.opacity = 0.17;
-          selectedCube = null;
+          if (previousSelectedCube) {
+            previousSelectedCube.material.opacity = 0.17;
+          }
         }
 
         renderer.render(scene, camera);
@@ -165,7 +200,27 @@ var Tris3dCanvas = function () {
         window.requestAnimationFrame(loop);
       }
 
-      loop(); // oh yeah!
+      loop(); // Oh yeah!
+    }
+
+    /**
+     * Set player choice.
+     */
+
+  }, {
+    key: 'setChoice',
+    value: function setChoice(playerIndex, cubeIndex) {
+      // Store player choice.
+      this.choices.push(cubeIndex);
+
+      var playerIndex = this.playerIndex;
+
+      // Set chosen cube color.
+      var color = this.playerColors[playerIndex];
+      this.cubes[cubeIndex].material.color.setHex(color);
+
+      // Next turn to play.
+      this.playerIndex = (playerIndex + 1) % 3;
     }
   }]);
 

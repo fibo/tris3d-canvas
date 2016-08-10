@@ -1,8 +1,9 @@
 const THREE = require('three')
 const staticProps = require('static-props')
 const OrbitControls = require('three-orbitcontrols')
+const EventEmitter = require('events')
 
-class Tris3dCanvas {
+class Tris3dCanvas extends EventEmitter {
   /**
    * Create a tris3d canvas
    *
@@ -12,6 +13,8 @@ class Tris3dCanvas {
    */
 
   constructor (id) {
+    super()
+
     // Get canvas, its offset, width and height.
     // //////////////////////////////////////////////////////////////////////
 
@@ -41,7 +44,7 @@ class Tris3dCanvas {
     const neutral = {
       color: 0x000000,
       opacity: 0.17,
-      transparent: true
+      transparent: true,
     }
 
     for (let i = -1; i < 2; i++) {
@@ -88,11 +91,11 @@ class Tris3dCanvas {
       event.preventDefault()
 
       if (this.isPlaying) {
-        const currentPlayerIndex = this.currentPlayerIndex
+        const humanPlayerIndex = this.humanPlayerIndex
         const playerIndex = this.playerIndex
         const selectedCube = this.selectedCube
 
-        if (selectedCube && (playerIndex === currentPlayerIndex)) {
+        if (selectedCube && (playerIndex === humanPlayerIndex)) {
           var cubeIndex = cellUuids.indexOf(selectedCube.uuid)
           this.setChoice(playerIndex, cubeIndex)
         }
@@ -133,8 +136,8 @@ class Tris3dCanvas {
     // Finally, add attributes.
     // //////////////////////////////////////////////////////////////////////
 
-    this.choices = []
-    this.currentPlayerIndex = 0
+    this.choosen = []
+    this.humanPlayerIndex = 0
     this.isPlaying = true
     this.playerIndex = 0
     this.selectedCube = null
@@ -203,17 +206,22 @@ class Tris3dCanvas {
    */
 
   setChoice (playerIndex, cubeIndex) {
-    // Store player choice.
-    this.choices.push(cubeIndex)
+    // Nothing to do if choice is already taken.
+    const choiceIsNotAvailable = (this.choosen.indexOf(cubeIndex) > -1)
+    if (choiceIsNotAvailable) return
 
-    var playerIndex = this.playerIndex
+    // Store player choice and notify listeners.
+    this.choosen.push(cubeIndex)
+    this.emit('setChoice', cubeIndex)
 
-    // Set chosen cube color.
+    // Color chosen cube.
     const color = this.playerColors[playerIndex]
     this.cubes[cubeIndex].material.color.setHex(color)
+    this.cubes[cubeIndex].material.transparent = false
 
     // Next turn to play.
     this.playerIndex = (playerIndex + 1) % 3
+    this.emit('nextPlayer', this.playerIndex)
   }
 }
 
