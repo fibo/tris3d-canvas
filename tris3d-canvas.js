@@ -3,15 +3,22 @@ const staticProps = require('static-props')
 const OrbitControls = require('three-orbitcontrols')
 
 class Tris3dCanvas {
+  /**
+   * Create a tris3d canvas
+   *
+   * @param {String} id of canvas element
+   *
+   * @constructor
+   */
+
   constructor (id) {
     // Get canvas, its offset, width and height
 
     const canvas = document.getElementById(id)
-    // TODO find a relyable method to compute offset, this one works
-    //      but in some cases don't.
-    let offset = canvas.parentNode.getBoundingClientRect()
-    const width = canvas.width
-    const height = canvas.height
+    var offsetLeft = canvas.offsetLeft
+    var offsetTop = canvas.offsetTop
+    var width = canvas.width
+    var height = canvas.height
 
     const cellSize = 1.7
 
@@ -20,14 +27,9 @@ class Tris3dCanvas {
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
     camera.position.z = 7.1
 
-    const rayCaster = new THREE.Raycaster()
-    // Initialize pointer with coordinates outside of the screen,
-    // otherwise the center cube will result as selected on start.
-    const pointer = new THREE.Vector2(10, 10)
-
     // Create 3x3x3 cubes
 
-    let cubes = []
+    var cubes = []
 
     const neutral = {
       color: 0x00bb11,
@@ -72,80 +74,75 @@ class Tris3dCanvas {
 
     function onMouseMove (event) {
       event.preventDefault()
-      // Cannot call ``event.stopPropagation()``
+      // Cannot call `event.stopPropagation()`,
       // otherwise the orbit control does not work.
 
-      const x = event.clientX - offset.left
-      const y = event.clientY - offset.top
+      // Find intersected cubes.
 
-      pointer.x = (x / canvas.width) * 2 - 1
-      pointer.y = -(y / canvas.height) * 2 + 1
+      var x = (event.offsetX || event.clientX - offsetLeft)
+      var y = (event.offsetY || event.clientY - offsetTop)
+
+
+      var vector = new THREE.Vector3(
+        (x / width) * 2 - 1,
+        -(y / height) * 2 + 1,
+        1
+      )
+
+      vector.unproject(camera)
+
+      var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
+      var intersectedCubes = ray.intersectObjects(cubes)
+
+      if (intersectedCubes.length > 0) {
+        this.selectedCube = intersectedCubes[0].object
+      } else {
+        this.selectedCube = null
+      }
     }
 
-    canvas.addEventListener('mousemove', onMouseMove, false)
-
-    /* TODO try this code for resize. How to trigger resize event?
-    function onResize () {
-      camera.aspect = canvas.width / canvas.height
-      camera.updateProjectionMatrix()
-      renderer.setSize(canvas.width, canvas.height)
-    }
-
-    canvas.addEventListener('resize', onResize, false)
-    */
+    canvas.addEventListener('mousemove', onMouseMove.bind(this), false)
 
     // Finally, add attributes.
+
+    this.selectedCube = null
 
     staticProps(this)({
       camera,
       canvas,
       cubes,
-      pointer,
       scene,
-      rayCaster,
       renderer
     })
   }
 
   render () {
+    const self = this
+
     const {
       camera,
       cubes,
-      pointer,
-      rayCaster,
       renderer,
       scene
     } = this
 
-    // TODO needed to rotate the camera
-    // let theta = 0
-    let selectedCube = null
+    var previousSelectedCube = null
+    var selectedCube = null
 
     function loop () {
-      // TODO The code below is works and can be used to rotate the camera
-      //      when the game is over.
-      // theta += 0.1
-      // camera.position.x = 10 * Math.sin(THREE.Math.degToRad(theta))
-      // camera.position.y = 10 * Math.sin(THREE.Math.degToRad(theta))
-      // camera.position.z = 10 * Math.cos(THREE.Math.degToRad(theta))
-      // camera.lookAt(scene.position)
-      // camera.updateMatrixWorld()
+      previousSelectedCube = selectedCube
+      selectedCube = self.selectedCube
 
-      // Find intersected objects.
-
-      rayCaster.setFromCamera(pointer, camera)
-      const intersects = rayCaster.intersectObjects(cubes)
-
-      if (intersects.length > 0) {
-        if (selectedCube !== intersects[0].object) {
-          if (selectedCube) selectedCube.material.opacity = 0.17
-
-          selectedCube = intersects[0].object
+      if (selectedCube) {
+        if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
+          previousSelectedCube.material.opacity = 0.17
+        } else {
           selectedCube.material.opacity = 0.71
         }
       } else {
-        if (selectedCube) selectedCube.material.opacity = 0.17
-        selectedCube = null
+        if (previousSelectedCube) {
+          previousSelectedCube.material.opacity = 0.17
+        }
       }
 
       renderer.render(scene, camera)
@@ -153,7 +150,7 @@ class Tris3dCanvas {
       window.requestAnimationFrame(loop)
     }
 
-    loop() // oh yeah!
+    loop() // Oh yeah!
   }
 }
 
