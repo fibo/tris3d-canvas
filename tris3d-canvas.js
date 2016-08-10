@@ -38,13 +38,13 @@ class Tris3dCanvas extends EventEmitter {
     var cubes = []
 
     // Remember (mesh cube) <--> (cell) association, using cube uuids.
-    var cellUuids = []
+    var cubeUuids = []
 
-    // Default material.
+    // Default materials.
     const neutral = {
       color: 0x000000,
       opacity: 0.17,
-      transparent: true,
+      transparent: true
     }
 
     for (let i = -1; i < 2; i++) {
@@ -62,7 +62,7 @@ class Tris3dCanvas extends EventEmitter {
 
           scene.add(cube)
 
-          cellUuids.push(cube.uuid)
+          cubeUuids.push(cube.uuid)
         }
       }
     }
@@ -96,16 +96,16 @@ class Tris3dCanvas extends EventEmitter {
         const selectedCube = this.selectedCube
 
         if (selectedCube && (playerIndex === humanPlayerIndex)) {
-          var cubeIndex = cellUuids.indexOf(selectedCube.uuid)
+          var cubeIndex = cubeUuids.indexOf(selectedCube.uuid)
           this.setChoice(playerIndex, cubeIndex)
         }
       }
     }
 
     function onMouseMove (event) {
-      event.preventDefault()
       // Cannot call `event.stopPropagation()`,
       // otherwise the orbit control does not work.
+      event.preventDefault()
 
       // Find intersected cubes.
 
@@ -122,6 +122,8 @@ class Tris3dCanvas extends EventEmitter {
 
       var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
       var intersectedCubes = ray.intersectObjects(cubes)
+
+      // Set selected cube.
 
       if (intersectedCubes.length > 0) {
         this.selectedCube = intersectedCubes[0].object
@@ -152,6 +154,8 @@ class Tris3dCanvas extends EventEmitter {
       camera,
       canvas,
       cubes,
+      cubeUuids,
+      neutral,
       playerColors,
       scene,
       renderer
@@ -167,6 +171,8 @@ class Tris3dCanvas extends EventEmitter {
 
     const {
       camera,
+      cubeUuids,
+      neutral,
       renderer,
       scene
     } = this
@@ -177,19 +183,47 @@ class Tris3dCanvas extends EventEmitter {
     // The main 3d loop.
     // //////////////////////////////////////////////////////////////////////
 
+    function isNotAvaliable (cube) {
+      var cubeIndex = cubeUuids.indexOf(cube.uuid)
+      return self.choosen.indexOf(cubeIndex) !== -1
+    }
+
+    function lowlight (cube) {
+      // Do nothing if cube is already choosen.
+      if (isNotAvaliable(cube)) return
+
+      cube.material.opacity = neutral.opacity
+      cube.material.color.setHex(neutral.color)
+    }
+
+    function highlight (cube) {
+      // Do nothing if cube is already choosen.
+      if (isNotAvaliable(cube)) return
+
+      const highlitedOpacity = 0.71
+      cube.material.opacity = highlitedOpacity
+
+      const isMyTurn = (self.humanPlayerIndex === self.playerIndex)
+
+      if (isMyTurn) {
+        const color = self.playerColors[self.playerIndex]
+        cube.material.color.setHex(color)
+      }
+    }
+
     function loop () {
       previousSelectedCube = selectedCube
       selectedCube = self.selectedCube
 
       if (selectedCube) {
         if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
-          previousSelectedCube.material.opacity = 0.17
+          lowlight(previousSelectedCube)
         } else {
-          selectedCube.material.opacity = 0.71
+          highlight(selectedCube)
         }
       } else {
         if (previousSelectedCube) {
-          previousSelectedCube.material.opacity = 0.17
+          lowlight(previousSelectedCube)
         }
       }
 
