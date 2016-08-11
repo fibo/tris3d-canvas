@@ -70,7 +70,7 @@ var Tris3dCanvas = function (_EventEmitter) {
       for (var j = -1; j < 2; j++) {
         for (var k = -1; k < 2; k++) {
           var geometry = new THREE.BoxGeometry(1, 1, 1);
-          var material = new THREE.MeshBasicMaterial(neutral);
+          var material = new THREE.MeshLambertMaterial(neutral);
 
           var cube = new THREE.Mesh(geometry, material);
           cubes.push(cube);
@@ -94,6 +94,39 @@ var Tris3dCanvas = function (_EventEmitter) {
     renderer.setClearColor(0xeeeeee);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.sortObjects = false;
+
+    // Add lights.
+    // //////////////////////////////////////////////////////////////////////
+
+    /*
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+    directionalLight.position.set(100, 100, 50)
+    scene.add(directionalLight)
+    */
+
+    var directionalLight0 = new THREE.DirectionalLight(0x808080);
+    directionalLight0.position.x = 2;
+    directionalLight0.position.y = 1;
+    directionalLight0.position.z = 0;
+    directionalLight0.position.normalize();
+    scene.add(directionalLight0);
+
+    var directionalLight1 = new THREE.DirectionalLight(0x808080);
+    directionalLight1.position.x = 1;
+    directionalLight1.position.y = -2;
+    directionalLight1.position.z = 0;
+    directionalLight1.position.normalize();
+    scene.add(directionalLight1);
+
+    var directionalLight2 = new THREE.DirectionalLight(0x808080);
+    directionalLight2.position.x = 0;
+    directionalLight2.position.y = 1;
+    directionalLight2.position.z = 1;
+    directionalLight2.position.normalize();
+    scene.add(directionalLight2);
+
+    var ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
 
     // Navigation controls.
     // //////////////////////////////////////////////////////////////////////
