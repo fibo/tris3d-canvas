@@ -7,11 +7,370 @@ var _tris3dCanvas2 = _interopRequireDefault(_tris3dCanvas);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var stupid = require('tris3d-ai').stupid;
+
 var tris3dCanvas = new _tris3dCanvas2.default('demo');
+
+tris3dCanvas.on('localPlayerTurnEnds', function () {
+  console.log('wait for other players choices');
+});
+
+tris3dCanvas.on('localPlayerTurnStarts', function () {
+  console.log('is my turn');
+});
+
+tris3dCanvas.on('nextPlayer', function (playerIndex) {
+  console.log('nextPlayer', playerIndex);
+
+  var isOtherPlayerTurn = tris3dCanvas.localPlayerIndex !== playerIndex;
+
+  // Bot choices.
+  if (isOtherPlayerTurn) {
+    var delay;
+
+    (function () {
+      var nextChoice = stupid(tris3dCanvas.choosen);
+
+      // Just a little bit of random delay.
+      delay = 710 + Math.random() * 1700;
+
+
+      setTimeout(function () {
+        tris3dCanvas.setChoice(playerIndex, nextChoice);
+      }, delay);
+    })();
+  }
+});
+
+tris3dCanvas.on('nobodyWins', function () {
+  console.log('Nobody wins :(');
+
+  setTimeout(function () {
+    tris3dCanvas.startNewMatch();
+  }, 1700);
+});
+
+tris3dCanvas.on('setChoice', function (cubeIndex) {
+  console.log('setChoice', cubeIndex);
+});
+
+tris3dCanvas.on('tris3d!', function (winnerPlayerIndex, winningCombinations) {
+  console.log('tris3d!');
+  console.log('winnerPlayerIndex', winnerPlayerIndex);
+  console.log('winningCombinations', winningCombinations);
+
+  setTimeout(function () {
+    tris3dCanvas.startNewMatch();
+  }, 7100);
+});
 
 tris3dCanvas.render();
 
-},{"tris3d-canvas":5}],2:[function(require,module,exports){
+},{"tris3d-ai":6,"tris3d-canvas":11}],2:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],3:[function(require,module,exports){
 /**
  * @param {Object} obj
  * @returns {Function}
@@ -46,7 +405,7 @@ function staticProps (obj) {
 }
 module.exports = staticProps
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var THREE = require('three')
 
 /**
@@ -1086,7 +1445,7 @@ Object.defineProperties( OrbitControls.prototype, {
 
 module.exports = OrbitControls
 
-},{"three":4}],4:[function(require,module,exports){
+},{"three":5}],5:[function(require,module,exports){
 // File:src/Three.js
 
 /**
@@ -42849,7 +43208,200 @@ THREE.MorphBlendMesh.prototype.update = function ( delta ) {
 };
 
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+exports.bastard = require('./src/bastard')
+exports.smart = require('./src/smart')
+exports.stupid = require('./src/stupid')
+
+},{"./src/bastard":7,"./src/smart":8,"./src/stupid":9}],7:[function(require,module,exports){
+function bastard () {
+
+}
+
+module.exports = bastard
+
+},{}],8:[function(require,module,exports){
+// TODO var tris3d = require('tris3d')
+
+function smart () {
+
+}
+
+module.exports = smart
+
+},{}],9:[function(require,module,exports){
+function stupid (choosen) {
+  if (choosen.length === 27) {
+    throw new Error('I am a stupid AI, but I understand that there is no choice available.')
+  }
+
+  var choice = Math.floor(Math.random() * 26)
+
+  var choiceIsAvailable = (choosen.indexOf(choice) === -1)
+
+  if (choiceIsAvailable) {
+    return choice
+  } else {
+    return stupid(choosen) // <-- Recursion here.
+  }
+}
+
+module.exports = stupid
+
+},{}],10:[function(require,module,exports){
+/**
+ * Check if three points form a tris
+ *
+ * This is the core algorithm of tris3d
+ *
+ * @param {Array} a
+ * @param {Array} b
+ * @param {Array} c
+ *
+ * @returns {Boolean} response
+ */
+
+function isTris (a, b, c) {
+  var indexOfCenter = indexOfCoordinates([1, 1, 1])
+  var indexOfA = indexOfCoordinates(a)
+  var indexOfB = indexOfCoordinates(b)
+  var indexOfC = indexOfCoordinates(c)
+  var indexOfP
+
+  // Let T = {a, b, c} be a tern of points.
+  //
+  // A necessary condition to be a tris is
+  //
+  //     semiSum(a, b) = c
+  //
+  // Since semiSum is cyclic, I can choose a, b, c in any order.
+  if (semiSumInZ3xZ3xZ3(indexOfA, indexOfB) !== indexOfC) {
+    return false
+  }
+
+  // If any point is the center, then T it is a tris.
+  if ((indexOfCenter === indexOfA) || (indexOfCenter === indexOfB) || (indexOfCenter === indexOfC)) {
+    return true
+  }
+
+  // Now, if it exists an index k where A_k = B_k
+  // let be a point P where P_h = 1 for every k != h,
+  // in other words P is the center of a face.
+  if (a[0] === b[0]) {
+    indexOfP = indexOfCoordinates([a[0], 1, 1])
+  }
+
+  if (a[1] === b[1]) {
+    indexOfP = indexOfCoordinates([1, a[1], 1])
+  }
+
+  if (a[2] === b[2]) {
+    indexOfP = indexOfCoordinates([1, 1, a[2]])
+  }
+
+  // If there exists indexes k, h where
+  // A_k = B_k, A_h = B_h
+  // then T is a tris.
+  if ((a[0] === b[0]) && (a[1] === b[1])) {
+    return true
+  }
+
+  if ((a[0] === b[0]) && (a[2] === b[2])) {
+    return true
+  }
+
+  if ((a[1] === b[1]) && (a[2] === b[2])) {
+    return true
+  }
+
+  // If T contains P, then it is a tris.
+  if ((indexOfP === indexOfA) || (indexOfP === indexOfB) || (indexOfP === indexOfC)) {
+    return true
+  }
+
+  // All other cases are not a tris.
+  // In particular there are some terns,for example, U = {0, 5, 7}
+  // for which the semiSum condition holds but they are not a tris.
+  return false
+}
+
+exports.isTris = isTris
+
+/**
+ * Semisum operator in Z3 x Z3 x Z3 space
+ *
+ * Z3 is the group of arithmetic modulo 3.
+ * Note that in Z3, mutliply and divide by 2 has the same result: in deed
+ *
+ * ```
+ * 0 -> 0
+ * 1 -> 2
+ * 2 -> 1
+ * ```
+ *
+ * So, in Z3
+ *
+ * ```
+ * (a + b) * 2 = (a + b) / 2
+ * ```
+ *
+ * Since I'm working with integers I prefer to multiply by 2 to avoid floats.
+
+ * Z3xZ3xZ3 is the cartesian product of Z3, seen as a 3 dimensional space immersed in R3.
+ *
+ *
+ * @param {Number} index1
+ * @param {Number} index2
+ *
+ * @return {Number} index
+ */
+
+function semiSumInZ3xZ3xZ3 (index1, index2) {
+  var point1 = coordinatesOfIndex(index1)
+  var point2 = coordinatesOfIndex(index2)
+
+  var x = ((point1[0] + point2[0]) * 2) % 3
+  var y = ((point1[1] + point2[1]) * 2) % 3
+  var z = ((point1[2] + point2[2]) * 2) % 3
+
+  return indexOfCoordinates([x, y, z])
+}
+
+exports.semiSumInZ3xZ3xZ3 = semiSumInZ3xZ3xZ3
+
+/**
+ * Convert point in Z3xZ3xZ3 to index
+ *
+ * @param {Array} coordinates
+ *
+ * @returns {Number} index
+ */
+
+function indexOfCoordinates (point) {
+  return point[0] + 3 * point[1] + 9 * point[2]
+}
+
+exports.indexOfCoordinates = indexOfCoordinates
+
+/**
+ * Convert index to point in Z3xZ3xZ3
+ *
+ * @param {Number} index
+ *
+ * @returns {Array} coordinates
+ */
+
+function coordinatesOfIndex (index) {
+  var x = index % 3
+  var y = ((index - x) % 9) / 3
+  var z = (index - x - (3 * y)) / 9
+
+  return [x, y, z]
+}
+
+exports.coordinatesOfIndex = coordinatesOfIndex
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -42860,20 +43412,38 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var THREE = require('three');
-var staticProps = require('static-props');
-var OrbitControls = require('three-orbitcontrols');
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-var Tris3dCanvas = function () {
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EventEmitter = require('events');
+var OrbitControls = require('three-orbitcontrols');
+var staticProps = require('static-props');
+var THREE = require('three');
+var tris3d = require('tris3d');
+
+var Tris3dCanvas = function (_EventEmitter) {
+  _inherits(Tris3dCanvas, _EventEmitter);
+
+  /**
+   * Create a tris3d canvas
+   *
+   * @param {String} id of canvas element
+   *
+   * @constructor
+   */
+
   function Tris3dCanvas(id) {
     _classCallCheck(this, Tris3dCanvas);
 
-    // Get canvas, its offset, width and height
+    // Get canvas, its offset, width and height.
+    // //////////////////////////////////////////////////////////////////////
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Tris3dCanvas).call(this));
 
     var canvas = document.getElementById(id);
-    // TODO find a relyable method to compute offset, this one works
-    //      but in some cases don't.
-    var offset = canvas.parentNode.getBoundingClientRect();
+    var offsetLeft = canvas.offsetLeft;
+    var offsetTop = canvas.offsetTop;
     var width = canvas.width;
     var height = canvas.height;
 
@@ -42884,17 +43454,18 @@ var Tris3dCanvas = function () {
     var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.z = 7.1;
 
-    var rayCaster = new THREE.Raycaster();
-    // Initialize pointer with coordinates outside of the screen,
-    // otherwise the center cube will result as selected on start.
-    var pointer = new THREE.Vector2(10, 10);
+    // Create 3x3x3 cubes.
+    // //////////////////////////////////////////////////////////////////////
 
-    // Create 3x3x3 cubes
-
+    // The 3d cubes array.
     var cubes = [];
 
+    // Remember (mesh cube) <--> (cell) association, using cube uuids.
+    var cubeUuids = [];
+
+    // Default materials.
     var neutral = {
-      color: 0x00bb11,
+      color: 0x000000,
       opacity: 0.17,
       transparent: true
     };
@@ -42903,7 +43474,7 @@ var Tris3dCanvas = function () {
       for (var j = -1; j < 2; j++) {
         for (var k = -1; k < 2; k++) {
           var geometry = new THREE.BoxGeometry(1, 1, 1);
-          var material = new THREE.MeshBasicMaterial(neutral);
+          var material = new THREE.MeshLambertMaterial(neutral);
 
           var cube = new THREE.Mesh(geometry, material);
           cubes.push(cube);
@@ -42913,11 +43484,14 @@ var Tris3dCanvas = function () {
           cube.position.z = k * cellSize;
 
           scene.add(cube);
+
+          cubeUuids.push(cube.uuid);
         }
       }
     }
 
     // Create renderer.
+    // //////////////////////////////////////////////////////////////////////
 
     var renderer = new THREE.WebGLRenderer({ canvas: canvas });
     renderer.setSize(width, height);
@@ -42925,7 +43499,41 @@ var Tris3dCanvas = function () {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.sortObjects = false;
 
+    // Add lights.
+    // //////////////////////////////////////////////////////////////////////
+
+    /*
+    var directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+    directionalLight.position.set(100, 100, 50)
+    scene.add(directionalLight)
+    */
+
+    var directionalLight0 = new THREE.DirectionalLight(0x808080);
+    directionalLight0.position.x = 2;
+    directionalLight0.position.y = 1;
+    directionalLight0.position.z = 0;
+    directionalLight0.position.normalize();
+    scene.add(directionalLight0);
+
+    var directionalLight1 = new THREE.DirectionalLight(0x808080);
+    directionalLight1.position.x = 1;
+    directionalLight1.position.y = -2;
+    directionalLight1.position.z = 0;
+    directionalLight1.position.normalize();
+    scene.add(directionalLight1);
+
+    var directionalLight2 = new THREE.DirectionalLight(0x808080);
+    directionalLight2.position.x = 0;
+    directionalLight2.position.y = 1;
+    directionalLight2.position.z = 1;
+    directionalLight2.position.normalize();
+    scene.add(directionalLight2);
+
+    var ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+
     // Navigation controls.
+    // //////////////////////////////////////////////////////////////////////
 
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -42933,83 +43541,190 @@ var Tris3dCanvas = function () {
     controls.enableZoom = false;
 
     // Init event listeners.
+    // //////////////////////////////////////////////////////////////////////
+
+    function onMouseDown(event) {
+      event.preventDefault();
+
+      if (this.isPlaying) {
+        var localPlayerIndex = this.localPlayerIndex;
+        var playerIndex = this.playerIndex;
+        var selectedCube = this.selectedCube;
+
+        if (selectedCube && playerIndex === localPlayerIndex) {
+          var cubeIndex = cubeUuids.indexOf(selectedCube.uuid);
+          this.setChoice(playerIndex, cubeIndex);
+        }
+      }
+    }
 
     function onMouseMove(event) {
-      event.preventDefault();
-      // Cannot call ``event.stopPropagation()``
+      // Cannot call `event.stopPropagation()`,
       // otherwise the orbit control does not work.
+      event.preventDefault();
 
-      var x = event.clientX - offset.left;
-      var y = event.clientY - offset.top;
+      // Find intersected cubes.
 
-      pointer.x = x / canvas.width * 2 - 1;
-      pointer.y = -(y / canvas.height) * 2 + 1;
+      var x = event.offsetX || event.clientX - offsetLeft;
+      var y = event.offsetY || event.clientY - offsetTop;
+
+      var vector = new THREE.Vector3(x / width * 2 - 1, -(y / height) * 2 + 1, 1);
+
+      vector.unproject(camera);
+
+      var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+      var intersectedCubes = ray.intersectObjects(cubes);
+
+      // Set selected cube.
+
+      if (intersectedCubes.length > 0) {
+        this.selectedCube = intersectedCubes[0].object;
+      } else {
+        this.selectedCube = null;
+      }
     }
 
-    canvas.addEventListener('mousemove', onMouseMove, false);
+    canvas.addEventListener('mousemove', onMouseMove.bind(_this), false);
+    canvas.addEventListener('mousedown', onMouseDown.bind(_this), false);
 
-    /* TODO try this code for resize. How to trigger resize event?
-    function onResize () {
-      camera.aspect = canvas.width / canvas.height
-      camera.updateProjectionMatrix()
-      renderer.setSize(canvas.width, canvas.height)
-    }
-     canvas.addEventListener('resize', onResize, false)
-    */
+    // Class attributes.
+    // //////////////////////////////////////////////////////////////////////
 
-    // Finally, add attributes.
+    _this.choosen = [];
+    _this.localPlayerIndex = 0;
+    _this.isPlaying = true;
+    _this.playerIndex = 0;
+    _this.selectedCube = null;
 
-    staticProps(this)({
+    var playerColors = [0xff0000, 0x00ff00, 0x0000ff];
+
+    staticProps(_this)({
       camera: camera,
       canvas: canvas,
       cubes: cubes,
-      pointer: pointer,
+      cubeUuids: cubeUuids,
+      neutral: neutral,
+      playerColors: playerColors,
       scene: scene,
-      rayCaster: rayCaster,
       renderer: renderer
     });
+
+    // Default events.
+    // //////////////////////////////////////////////////////////////////////
+
+    _this.on('nextPlayer', function (playerIndex) {
+      var localPlayerIndex = _this.localPlayerIndex;
+
+      if (playerIndex === localPlayerIndex) {
+        _this.emit('localPlayerTurnStarts');
+      } else {
+        var previousPlayerIndex = (playerIndex + 2) % 3;
+
+        if (previousPlayerIndex === localPlayerIndex) {
+          _this.emit('localPlayerTurnEnds');
+        }
+      }
+    });
+
+    _this.on('tris3d!', function () {
+      _this.isPlaying = false;
+    });
+
+    _this.on('nobodyWins', function () {
+      _this.isPlaying = false;
+    });
+    return _this;
   }
 
+  /**
+   * Improve winning combinations visibility.
+   */
+
   _createClass(Tris3dCanvas, [{
+    key: 'highlightTris',
+    value: function highlightTris(winningCombinations) {
+      var winningCubes = [];
+
+      // Get all winning cube indexes without repetitions.
+      winningCombinations.forEach(function (winningCombination) {
+        winningCombination.forEach(function (winningIndex) {
+          if (winningCubes.indexOf(winningIndex) === -1) {
+            winningCubes.push(winningIndex);
+          }
+        });
+      });
+
+      this.cubes.forEach(function (cube, cubeIndex) {
+        if (winningCubes.indexOf(cubeIndex) === -1) {
+          cube.material.transparent = true;
+        }
+      });
+    }
+
+    /**
+     * Start rendering the 3d scene.
+     */
+
+  }, {
     key: 'render',
     value: function render() {
+      var self = this;
+
       var camera = this.camera;
-      var cubes = this.cubes;
-      var pointer = this.pointer;
-      var rayCaster = this.rayCaster;
+      var cubeUuids = this.cubeUuids;
+      var neutral = this.neutral;
       var renderer = this.renderer;
       var scene = this.scene;
 
-      // TODO needed to rotate the camera
-      // let theta = 0
 
+      var previousSelectedCube = null;
       var selectedCube = null;
 
+      // The main 3d loop.
+      // //////////////////////////////////////////////////////////////////////
+
+      function isNotAvaliable(cube) {
+        var cubeIndex = cubeUuids.indexOf(cube.uuid);
+        return self.choosen.indexOf(cubeIndex) !== -1;
+      }
+
+      function lowlight(cube) {
+        // Do nothing if cube is already choosen.
+        if (isNotAvaliable(cube)) return;
+
+        cube.material.opacity = neutral.opacity;
+        cube.material.color.setHex(neutral.color);
+      }
+
+      function highlight(cube) {
+        // Do nothing if cube is already choosen.
+        if (isNotAvaliable(cube)) return;
+
+        var highlitedOpacity = 0.71;
+        cube.material.opacity = highlitedOpacity;
+
+        var isMyTurn = self.localPlayerIndex === self.playerIndex;
+
+        if (isMyTurn) {
+          var color = self.playerColors[self.playerIndex];
+          cube.material.color.setHex(color);
+        }
+      }
+
       function loop() {
-        // TODO The code below is works and can be used to rotate the camera
-        //      when the game is over.
-        // theta += 0.1
-        // camera.position.x = 10 * Math.sin(THREE.Math.degToRad(theta))
-        // camera.position.y = 10 * Math.sin(THREE.Math.degToRad(theta))
-        // camera.position.z = 10 * Math.cos(THREE.Math.degToRad(theta))
-        // camera.lookAt(scene.position)
-        // camera.updateMatrixWorld()
+        previousSelectedCube = selectedCube;
+        selectedCube = self.selectedCube;
 
-        // Find intersected objects.
-
-        rayCaster.setFromCamera(pointer, camera);
-        var intersects = rayCaster.intersectObjects(cubes);
-
-        if (intersects.length > 0) {
-          if (selectedCube !== intersects[0].object) {
-            if (selectedCube) selectedCube.material.opacity = 0.17;
-
-            selectedCube = intersects[0].object;
-            selectedCube.material.opacity = 0.71;
+        if (selectedCube) {
+          if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
+            lowlight(previousSelectedCube);
+          } else {
+            highlight(selectedCube);
           }
         } else {
-          if (selectedCube) selectedCube.material.opacity = 0.17;
-          selectedCube = null;
+          if (previousSelectedCube) {
+            lowlight(previousSelectedCube);
+          }
         }
 
         renderer.render(scene, camera);
@@ -43017,13 +43732,97 @@ var Tris3dCanvas = function () {
         window.requestAnimationFrame(loop);
       }
 
-      loop(); // oh yeah!
+      loop(); // Oh yeah!
+    }
+
+    /**
+     * Set player choice.
+     */
+
+  }, {
+    key: 'setChoice',
+    value: function setChoice(playerIndex, cubeIndex) {
+      // Nothing to do if choice is already taken.
+      var choiceIsNotAvailable = this.choosen.indexOf(cubeIndex) > -1;
+      if (choiceIsNotAvailable) return;
+
+      // Store player choice and notify listeners.
+      var numberOfChoices = this.choosen.push(cubeIndex);
+      this.emit('setChoice', cubeIndex);
+
+      // Color choosen cube.
+      var color = this.playerColors[playerIndex];
+      this.cubes[cubeIndex].material.color.setHex(color);
+      this.cubes[cubeIndex].material.transparent = false;
+
+      // Check if current player wins.
+      // //////////////////////////////////////////////////////////////////////
+
+      // Get player choices.
+      var playerChoices = [];
+
+      for (var i = numberOfChoices - 1; i >= 0; i -= 3) {
+        playerChoices.push(this.choosen[i]);
+      }
+
+      // A choice can lead to more that one winning combination.
+      var winningCombinations = [];
+
+      // For every combination, check if it wins.
+      for (var k = 2; k < playerChoices.length; k++) {
+        for (var j = 1; j < k; j++) {
+          var coords0 = tris3d.coordinatesOfIndex(playerChoices[0]);
+          var coords1 = tris3d.coordinatesOfIndex(playerChoices[j]);
+          var coords2 = tris3d.coordinatesOfIndex(playerChoices[k]);
+
+          if (tris3d.isTris(coords0, coords1, coords2)) {
+            winningCombinations.push([playerChoices[0], playerChoices[j], playerChoices[k]]);
+          }
+        }
+      }
+
+      if (winningCombinations.length === 0) {
+        if (this.choosen.length === 27) {
+          this.emit('nobodyWins');
+        } else {
+          // Next turn to play.
+          this.playerIndex = (playerIndex + 1) % 3;
+          this.emit('nextPlayer', this.playerIndex);
+        }
+      } else {
+        this.emit('tris3d!', playerIndex, winningCombinations);
+        this.highlightTris(winningCombinations);
+      }
+    }
+
+    /**
+     * Reset variables and start a brand new match.
+     */
+
+  }, {
+    key: 'startNewMatch',
+    value: function startNewMatch() {
+      // Do nothing if there is a match on going.
+      if (this.isPlaying) return;
+
+      this.choosen = [];
+      this.isPlaying = true;
+      this.playerIndex = 0;
+      this.selectedCube = null;
+
+      var neutral = this.neutral;
+
+      this.cubes.forEach(function (cube) {
+        cube.material.opacity = neutral.opacity;
+        cube.material.transparent = true;
+        cube.material.color.setHex(neutral.color);
+      });
     }
   }]);
 
   return Tris3dCanvas;
-}();
+}(EventEmitter);
 
 exports.default = Tris3dCanvas;
 
-},{"static-props":2,"three":4,"three-orbitcontrols":3}]},{},[1]);
+},{"events":2,"static-props":3,"three":5,"three-orbitcontrols":4,"tris3d":10}]},{},[1]);
