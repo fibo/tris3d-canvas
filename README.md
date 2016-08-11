@@ -47,13 +47,29 @@ Then create a Tris3dCanvas object
 const tris3dCanvas = new Tris3dCanvas('demo')
 ```
 
+### `tris3dCanvas.on('localPlayerTurnEnds', () => {})`
+
+> Listen to *localPlayerTurnEnds* event.
+
+### `tris3dCanvas.on('localPlayerTurnStarts', () => {})`
+
+> Listen to *localPlayerTurnStarts* event.
+
 ### `tris3dCanvas.on('nextPlayer', (playerIndex) => {})`
 
 > Listen to *nextPlayer* event.
 
+### `tris3dCanvas.on('nobodyWins', () => {})`
+
+> Listen to *nobodyWins* event.
+
 ### `tris3dCanvas.on('setChoice', (cubeIndex) => {})`
 
 > Listen to *setChoice* event.
+
+### `tris3dCanvas.on('tris3d!', (winnerPlayerIndex, winningCombinations) => {})`
+
+> Listen to *tris3d!* event.
 
 ### `tris3dCanvas.render()`
 
@@ -62,6 +78,10 @@ const tris3dCanvas = new Tris3dCanvas('demo')
 ### `tris3dCanvas.setChoice(playerIndex, cubeIndex)`
 
 > Set player choice.
+
+### `tris3dCanvas.startNewMatch()`
+
+> Start a brand new match
 
 ## License
 

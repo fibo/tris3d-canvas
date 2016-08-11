@@ -1,7 +1,8 @@
-const THREE = require('three')
-const staticProps = require('static-props')
-const OrbitControls = require('three-orbitcontrols')
 const EventEmitter = require('events')
+const OrbitControls = require('three-orbitcontrols')
+const staticProps = require('static-props')
+const THREE = require('three')
+const tris3d = require('tris3d')
 
 class Tris3dCanvas extends EventEmitter {
   /**
@@ -91,11 +92,11 @@ class Tris3dCanvas extends EventEmitter {
       event.preventDefault()
 
       if (this.isPlaying) {
-        const humanPlayerIndex = this.humanPlayerIndex
+        const localPlayerIndex = this.localPlayerIndex
         const playerIndex = this.playerIndex
         const selectedCube = this.selectedCube
 
-        if (selectedCube && (playerIndex === humanPlayerIndex)) {
+        if (selectedCube && (playerIndex === localPlayerIndex)) {
           var cubeIndex = cubeUuids.indexOf(selectedCube.uuid)
           this.setChoice(playerIndex, cubeIndex)
         }
@@ -135,11 +136,11 @@ class Tris3dCanvas extends EventEmitter {
     canvas.addEventListener('mousemove', onMouseMove.bind(this), false)
     canvas.addEventListener('mousedown', onMouseDown.bind(this), false)
 
-    // Finally, add attributes.
+    // Class attributes.
     // //////////////////////////////////////////////////////////////////////
 
     this.choosen = []
-    this.humanPlayerIndex = 0
+    this.localPlayerIndex = 0
     this.isPlaying = true
     this.playerIndex = 0
     this.selectedCube = null
@@ -159,6 +160,54 @@ class Tris3dCanvas extends EventEmitter {
       playerColors,
       scene,
       renderer
+    })
+
+    // Default events.
+    // //////////////////////////////////////////////////////////////////////
+
+    this.on('nextPlayer', (playerIndex) => {
+      const localPlayerIndex = this.localPlayerIndex
+
+      if (playerIndex === localPlayerIndex) {
+        this.emit('localPlayerTurnStarts')
+      } else {
+        const previousPlayerIndex = (playerIndex + 2) % 3
+
+        if (previousPlayerIndex === localPlayerIndex) {
+          this.emit('localPlayerTurnEnds')
+        }
+      }
+    })
+
+    this.on('tris3d!', () => {
+      this.isPlaying = false
+    })
+
+    this.on('nobodyWins', () => {
+      this.isPlaying = false
+    })
+  }
+
+  /**
+   * Improve winning combinations visibility.
+   */
+
+  highlightTris (winningCombinations) {
+    var winningCubes = []
+
+    // Get all winning cube indexes without repetitions.
+    winningCombinations.forEach((winningCombination) => {
+      winningCombination.forEach((winningIndex) => {
+        if (winningCubes.indexOf(winningIndex) === -1) {
+          winningCubes.push(winningIndex)
+        }
+      })
+    })
+
+    this.cubes.forEach((cube, cubeIndex) => {
+      if (winningCubes.indexOf(cubeIndex) === -1) {
+        cube.material.transparent = true
+      }
     })
   }
 
@@ -203,7 +252,7 @@ class Tris3dCanvas extends EventEmitter {
       const highlitedOpacity = 0.71
       cube.material.opacity = highlitedOpacity
 
-      const isMyTurn = (self.humanPlayerIndex === self.playerIndex)
+      const isMyTurn = (self.localPlayerIndex === self.playerIndex)
 
       if (isMyTurn) {
         const color = self.playerColors[self.playerIndex]
@@ -245,18 +294,80 @@ class Tris3dCanvas extends EventEmitter {
     if (choiceIsNotAvailable) return
 
     // Store player choice and notify listeners.
-    this.choosen.push(cubeIndex)
+    const numberOfChoices = this.choosen.push(cubeIndex)
     this.emit('setChoice', cubeIndex)
 
-    // Color chosen cube.
+    // Color choosen cube.
     const color = this.playerColors[playerIndex]
     this.cubes[cubeIndex].material.color.setHex(color)
     this.cubes[cubeIndex].material.transparent = false
 
-    // Next turn to play.
-    this.playerIndex = (playerIndex + 1) % 3
-    this.emit('nextPlayer', this.playerIndex)
+    // Check if current player wins.
+    // //////////////////////////////////////////////////////////////////////
+
+    // Get player choices.
+    var playerChoices = []
+
+    for (var i = numberOfChoices - 1; i >= 0; i -= 3) {
+      playerChoices.push(this.choosen[i])
+    }
+
+    // A choice can lead to more that one winning combination.
+    var winningCombinations = []
+
+    // For every combination, check if it wins.
+    for (var k = 2; k < playerChoices.length; k++) {
+      for (var j = 1; j < k; j++) {
+        var coords0 = tris3d.coordinatesOfIndex(playerChoices[0])
+        var coords1 = tris3d.coordinatesOfIndex(playerChoices[j])
+        var coords2 = tris3d.coordinatesOfIndex(playerChoices[k])
+
+        if (tris3d.isTris(coords0, coords1, coords2)) {
+          winningCombinations.push([
+            playerChoices[0],
+            playerChoices[j],
+            playerChoices[k]
+          ])
+        }
+      }
+    }
+
+    if (winningCombinations.length === 0) {
+      if (this.choosen.length === 27) {
+        this.emit('nobodyWins')
+      } else {
+        // Next turn to play.
+        this.playerIndex = (playerIndex + 1) % 3
+        this.emit('nextPlayer', this.playerIndex)
+      }
+    } else {
+      this.emit('tris3d!', playerIndex, winningCombinations)
+      this.highlightTris(winningCombinations)
+    }
   }
+
+  /**
+   * Reset variables and start a brand new match.
+   */
+
+  startNewMatch () {
+    // Do nothing if there is a match on going.
+    if (this.isPlaying) return
+
+    this.choosen = []
+    this.isPlaying = true
+    this.playerIndex = 0
+    this.selectedCube = null
+
+    const neutral = this.neutral
+
+    this.cubes.forEach((cube) => {
+      cube.material.opacity = neutral.opacity
+      cube.material.transparent = true
+      cube.material.color.setHex(neutral.color)
+    })
+  }
+
 }
 
 export default Tris3dCanvas
