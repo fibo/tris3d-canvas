@@ -36,7 +36,7 @@ tris3dCanvas.on('nextPlayer', function (playerIndex) {
 
 
       setTimeout(function () {
-        tris3dCanvas.setChoice(playerIndex, nextChoice);
+        tris3dCanvas.setChoice(nextChoice);
       }, delay);
     })();
   }
@@ -43442,6 +43442,7 @@ var Tris3dCanvas = function (_EventEmitter) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Tris3dCanvas).call(this));
 
     var canvas = document.getElementById(id);
+
     var offsetLeft = canvas.offsetLeft;
     var offsetTop = canvas.offsetTop;
     var width = canvas.width;
@@ -43553,7 +43554,7 @@ var Tris3dCanvas = function (_EventEmitter) {
 
         if (selectedCube && playerIndex === localPlayerIndex) {
           var cubeIndex = cubeUuids.indexOf(selectedCube.uuid);
-          this.setChoice(playerIndex, cubeIndex);
+          this.setChoice(cubeIndex);
         }
       }
     }
@@ -43741,10 +43742,12 @@ var Tris3dCanvas = function (_EventEmitter) {
 
   }, {
     key: 'setChoice',
-    value: function setChoice(playerIndex, cubeIndex) {
+    value: function setChoice(cubeIndex) {
       // Nothing to do if choice is already taken.
       var choiceIsNotAvailable = this.choosen.indexOf(cubeIndex) > -1;
       if (choiceIsNotAvailable) return;
+
+      var playerIndex = this.playerIndex;
 
       // Store player choice and notify listeners.
       var numberOfChoices = this.choosen.push(cubeIndex);

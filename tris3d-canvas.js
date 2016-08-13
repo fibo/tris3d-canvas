@@ -20,6 +20,7 @@ class Tris3dCanvas extends EventEmitter {
     // //////////////////////////////////////////////////////////////////////
 
     const canvas = document.getElementById(id)
+
     var offsetLeft = canvas.offsetLeft
     var offsetTop = canvas.offsetTop
     var width = canvas.width
@@ -131,7 +132,7 @@ class Tris3dCanvas extends EventEmitter {
 
         if (selectedCube && (playerIndex === localPlayerIndex)) {
           var cubeIndex = cubeUuids.indexOf(selectedCube.uuid)
-          this.setChoice(playerIndex, cubeIndex)
+          this.setChoice(cubeIndex)
         }
       }
     }
@@ -321,10 +322,12 @@ class Tris3dCanvas extends EventEmitter {
    * Set player choice.
    */
 
-  setChoice (playerIndex, cubeIndex) {
+  setChoice (cubeIndex) {
     // Nothing to do if choice is already taken.
     const choiceIsNotAvailable = (this.choosen.indexOf(cubeIndex) > -1)
     if (choiceIsNotAvailable) return
+
+    const playerIndex = this.playerIndex
 
     // Store player choice and notify listeners.
     const numberOfChoices = this.choosen.push(cubeIndex)

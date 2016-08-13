@@ -24,7 +24,7 @@ tris3dCanvas.on('nextPlayer', (playerIndex) => {
     var delay = 710 + Math.random() * 1700
 
     setTimeout(() => {
-      tris3dCanvas.setChoice(playerIndex, nextChoice)
+      tris3dCanvas.setChoice(nextChoice)
     }, delay)
   }
 })
