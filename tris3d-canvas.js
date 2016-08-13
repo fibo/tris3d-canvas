@@ -298,15 +298,18 @@ class Tris3dCanvas extends EventEmitter {
       previousSelectedCube = selectedCube
       selectedCube = self.selectedCube
 
-      if (selectedCube) {
-        if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
-          lowlight(previousSelectedCube)
+      // Highlight selected cube.
+      if (self.isPlaying) {
+        if (selectedCube) {
+          if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
+            lowlight(previousSelectedCube)
+          } else {
+            highlight(selectedCube)
+          }
         } else {
-          highlight(selectedCube)
-        }
-      } else {
-        if (previousSelectedCube) {
-          lowlight(previousSelectedCube)
+          if (previousSelectedCube) {
+            lowlight(previousSelectedCube)
+          }
         }
       }
 
