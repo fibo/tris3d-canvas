@@ -79,6 +79,10 @@ const tris3dCanvas = new Tris3dCanvas('demo')
 
 > Set player choice.
 
+### `tris3dCanvas.resetPlayground()`
+
+> Reset playground without start playing a new match.
+
 ### `tris3dCanvas.startNewMatch()`
 
 > Start a brand new match

@@ -395,17 +395,14 @@ var Tris3dCanvas = function (_EventEmitter) {
     }
 
     /**
-     * Reset variables and start a brand new match.
+     * Reset variables and cleanup playground.
      */
 
   }, {
-    key: 'startNewMatch',
-    value: function startNewMatch() {
-      // Do nothing if there is a match on going.
-      if (this.isPlaying) return;
-
+    key: 'resetPlayground',
+    value: function resetPlayground() {
       this.choosen = [];
-      this.isPlaying = true;
+      this.isPlaying = false;
       this.playerIndex = 0;
       this.selectedCube = null;
 
@@ -416,6 +413,17 @@ var Tris3dCanvas = function (_EventEmitter) {
         cube.material.transparent = true;
         cube.material.color.setHex(neutral.color);
       });
+    }
+
+    /**
+     * Reset playground and start a brand new match.
+     */
+
+  }, {
+    key: 'startNewMatch',
+    value: function startNewMatch() {
+      this.resetPlayground();
+      this.isPlaying = true;
     }
   }]);
 

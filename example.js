@@ -1,5 +1,5 @@
 import Tris3dCanvas from 'tris3d-canvas'
-const stupid = require('tris3d-ai').stupid
+const smart = require('tris3d-ai').smart
 
 const tris3dCanvas = new Tris3dCanvas('demo')
 
@@ -18,7 +18,14 @@ tris3dCanvas.on('nextPlayer', (playerIndex) => {
 
   // Bot choices.
   if (isOtherPlayerTurn) {
-    const nextChoice = stupid(tris3dCanvas.choosen)
+    var nextChoice
+
+    if (tris3dCanvas.choosen.indexOf(13) === -1) {
+      // Get the center, if available.
+      nextChoice = 13
+    } else {
+      nextChoice = smart(tris3dCanvas.choosen)
+    }
 
     // Just a little bit of random delay.
     var delay = 710 + Math.random() * 1700

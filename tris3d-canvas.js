@@ -383,15 +383,12 @@ class Tris3dCanvas extends EventEmitter {
   }
 
   /**
-   * Reset variables and start a brand new match.
+   * Reset variables and cleanup playground.
    */
 
-  startNewMatch () {
-    // Do nothing if there is a match on going.
-    if (this.isPlaying) return
-
+  resetPlayground () {
     this.choosen = []
-    this.isPlaying = true
+    this.isPlaying = false
     this.playerIndex = 0
     this.selectedCube = null
 
@@ -404,6 +401,14 @@ class Tris3dCanvas extends EventEmitter {
     })
   }
 
+  /**
+   * Reset playground and start a brand new match.
+   */
+
+  startNewMatch () {
+    this.resetPlayground()
+    this.isPlaying = true
+  }
 }
 
 export default Tris3dCanvas
