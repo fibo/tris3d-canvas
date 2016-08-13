@@ -7,7 +7,7 @@ var _tris3dCanvas2 = _interopRequireDefault(_tris3dCanvas);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var stupid = require('tris3d-ai').stupid;
+var smart = require('tris3d-ai').smart;
 
 var tris3dCanvas = new _tris3dCanvas2.default('demo');
 
@@ -26,19 +26,21 @@ tris3dCanvas.on('nextPlayer', function (playerIndex) {
 
   // Bot choices.
   if (isOtherPlayerTurn) {
-    var delay;
+    var nextChoice;
 
-    (function () {
-      var nextChoice = stupid(tris3dCanvas.choosen);
+    if (tris3dCanvas.choosen.indexOf(13) === -1) {
+      // Get the center, if available.
+      nextChoice = 13;
+    } else {
+      nextChoice = smart(tris3dCanvas.choosen);
+    }
 
-      // Just a little bit of random delay.
-      delay = 710 + Math.random() * 1700;
+    // Just a little bit of random delay.
+    var delay = 710 + Math.random() * 1700;
 
-
-      setTimeout(function () {
-        tris3dCanvas.setChoice(nextChoice);
-      }, delay);
-    })();
+    setTimeout(function () {
+      tris3dCanvas.setChoice(nextChoice);
+    }, delay);
   }
 });
 
@@ -43214,22 +43216,56 @@ exports.smart = require('./src/smart')
 exports.stupid = require('./src/stupid')
 
 },{"./src/bastard":7,"./src/smart":8,"./src/stupid":9}],7:[function(require,module,exports){
-function bastard () {
+function bastard (choosen) {
+  if (choosen.length === 27) {
+    throw new Error('Are you stupid? There is no choice available.')
+  }
 
+  // TODO
 }
 
 module.exports = bastard
 
 },{}],8:[function(require,module,exports){
-// TODO var tris3d = require('tris3d')
+var tris3d = require('tris3d')
+var stupid = require('./stupid')
 
-function smart () {
+function smart (choosen) {
+  if (choosen.length === 27) {
+    throw new Error('No choice available.')
+  }
 
+  var myChoices = []
+
+  for (var byMe = choosen.length - 3; byMe >= 0; byMe -= 3) {
+    myChoices.push(choosen[byMe])
+  }
+
+  for (var k = 1; k < myChoices.length; k++) {
+    for (var j = 0; j < k; j++) {
+      for (var i = 0; i < 27; i++) {
+        // Nothing to do if choice is not available.
+        if (choosen.indexOf[i] > -1) continue
+
+        var coords0 = tris3d.coordinatesOfIndex(i)
+        var coords1 = tris3d.coordinatesOfIndex(myChoices[j])
+        var coords2 = tris3d.coordinatesOfIndex(myChoices[k])
+
+        // Check if it is a winning choice.
+        if (tris3d.isTris(coords0, coords1, coords2)) {
+          return i
+        }
+      }
+    }
+  }
+
+  // If no winning choice is found, behave like a stupid AI.
+  return stupid(choosen)
 }
 
 module.exports = smart
 
-},{}],9:[function(require,module,exports){
+},{"./stupid":9,"tris3d":10}],9:[function(require,module,exports){
 function stupid (choosen) {
   if (choosen.length === 27) {
     throw new Error('I am a stupid AI, but I understand that there is no choice available.')
@@ -43799,17 +43835,14 @@ var Tris3dCanvas = function (_EventEmitter) {
     }
 
     /**
-     * Reset variables and start a brand new match.
+     * Reset variables and cleanup playground.
      */
 
   }, {
-    key: 'startNewMatch',
-    value: function startNewMatch() {
-      // Do nothing if there is a match on going.
-      if (this.isPlaying) return;
-
+    key: 'resetPlayground',
+    value: function resetPlayground() {
       this.choosen = [];
-      this.isPlaying = true;
+      this.isPlaying = false;
       this.playerIndex = 0;
       this.selectedCube = null;
 
@@ -43820,6 +43853,17 @@ var Tris3dCanvas = function (_EventEmitter) {
         cube.material.transparent = true;
         cube.material.color.setHex(neutral.color);
       });
+    }
+
+    /**
+     * Reset playground and start a brand new match.
+     */
+
+  }, {
+    key: 'startNewMatch',
+    value: function startNewMatch() {
+      this.resetPlayground();
+      this.isPlaying = true;
     }
   }]);
 

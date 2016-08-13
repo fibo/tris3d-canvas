@@ -48,7 +48,7 @@
   ],
   "devDependencies": {
     "standard": "^7.1.2",
-    "tris3d-ai": "^0.2.0",
+    "tris3d-ai": "^0.3.0",
     "zeroconf-redux": "^0.5.0"
   },
   "dependencies": {
