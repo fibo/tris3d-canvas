@@ -50,6 +50,10 @@ Then create a Tris3dCanvas object
 const tris3dCanvas = new Tris3dCanvas('demo')
 ```
 
+### `tris3dCanvas.localPlayerIndex`
+
+Can be 0, 1, 2. Defaults to 0, which means the local player moves first.
+
 ### `tris3dCanvas.on('localPlayerTurnEnds', () => {})`
 
 > Listen to *localPlayerTurnEnds* event.

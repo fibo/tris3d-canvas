@@ -124,6 +124,7 @@ class Tris3dCanvas extends EventEmitter {
 
     function onMouseDown (event) {
       event.preventDefault()
+      event.stopPropagation()
 
       if (this.isPlaying) {
         const localPlayerIndex = this.localPlayerIndex
@@ -175,7 +176,7 @@ class Tris3dCanvas extends EventEmitter {
 
     this.choosen = []
     this.localPlayerIndex = 0
-    this.isPlaying = true
+    this.isPlaying = false
     this.playerIndex = 0
     this.selectedCube = null
 
@@ -411,6 +412,10 @@ class Tris3dCanvas extends EventEmitter {
   startNewMatch () {
     this.resetPlayground()
     this.isPlaying = true
+
+    if (this.localPlayerIndex === 0) {
+      this.emit('localPlayerTurnStarts')
+    }
   }
 }
 

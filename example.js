@@ -1,4 +1,5 @@
 import Tris3dCanvas from 'tris3d-canvas'
+const bastard = require('tris3d-ai').bastard
 const smart = require('tris3d-ai').smart
 
 const tris3dCanvas = new Tris3dCanvas('demo')
@@ -18,19 +19,21 @@ tris3dCanvas.on('nextPlayer', (playerIndex) => {
 
   // Bot choices.
   if (isOtherPlayerTurn) {
-    var nextChoice
-
-    if (tris3dCanvas.choosen.indexOf(13) === -1) {
-      // Get the center, if available.
-      nextChoice = 13
-    } else {
-      nextChoice = smart(tris3dCanvas.choosen)
-    }
-
     // Just a little bit of random delay.
     var delay = 710 + Math.random() * 1700
 
     setTimeout(() => {
+      var bot
+
+      // Flip a coin, use smart ot bastar bot.
+      if (Math.random() < 0.5) {
+        bot = smart
+      } else {
+        bot = bastard
+      }
+
+      var nextChoice = bot(tris3dCanvas.choosen)
+
       tris3dCanvas.setChoice(nextChoice)
     }, delay)
   }
@@ -59,3 +62,4 @@ tris3dCanvas.on('tris3d!', (winnerPlayerIndex, winningCombinations) => {
 })
 
 tris3dCanvas.render()
+tris3dCanvas.startNewMatch()

@@ -43582,6 +43582,7 @@ var Tris3dCanvas = function (_EventEmitter) {
 
     function onMouseDown(event) {
       event.preventDefault();
+      event.stopPropagation();
 
       if (this.isPlaying) {
         var localPlayerIndex = this.localPlayerIndex;
@@ -43752,15 +43753,18 @@ var Tris3dCanvas = function (_EventEmitter) {
         previousSelectedCube = selectedCube;
         selectedCube = self.selectedCube;
 
-        if (selectedCube) {
-          if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
-            lowlight(previousSelectedCube);
+        // Highlight selected cube.
+        if (self.isPlaying) {
+          if (selectedCube) {
+            if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
+              lowlight(previousSelectedCube);
+            } else {
+              highlight(selectedCube);
+            }
           } else {
-            highlight(selectedCube);
-          }
-        } else {
-          if (previousSelectedCube) {
-            lowlight(previousSelectedCube);
+            if (previousSelectedCube) {
+              lowlight(previousSelectedCube);
+            }
           }
         }
 
