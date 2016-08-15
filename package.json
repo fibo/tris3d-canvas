@@ -22,7 +22,7 @@
     "jekyll": "npm run gh-pages_data; npm run cp_package.json; npm run homepage; cd gh-pages; jekyll build; cd ..",
     "lint": "standard example.js tris3d-canvas.js",
     "postupdate-deps": "git commit -am ':arrow_up: updated deps' || git checkout -- package.json",
-    "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
+    "postversion": "git push origin v${npm_package_version}; npm publish; npm run push",
     "push": "git push origin master && npm run gh-pages_push",
     "pull": "git pull origin master && npm run gh-pages_pull",
     "start": "NODE_PATH=. budo example.js -d . -l -o -- -t babelify",
