@@ -190,7 +190,7 @@ var Tris3dCanvas = function (_EventEmitter) {
 
     _this.choosen = [];
     _this.localPlayerIndex = 0;
-    _this.isPlaying = true;
+    _this.isPlaying = false;
     _this.playerIndex = 0;
     _this.selectedCube = null;
 
@@ -428,6 +428,10 @@ var Tris3dCanvas = function (_EventEmitter) {
     value: function startNewMatch() {
       this.resetPlayground();
       this.isPlaying = true;
+
+      if (this.localPlayerIndex === 0) {
+        this.emit('localPlayerTurnStarts');
+      }
     }
   }]);
 
