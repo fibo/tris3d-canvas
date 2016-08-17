@@ -7,6 +7,7 @@ var _tris3dCanvas2 = _interopRequireDefault(_tris3dCanvas);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var bastard = require('tris3d-ai').bastard;
 var smart = require('tris3d-ai').smart;
 
 var tris3dCanvas = new _tris3dCanvas2.default('demo');
@@ -26,19 +27,21 @@ tris3dCanvas.on('nextPlayer', function (playerIndex) {
 
   // Bot choices.
   if (isOtherPlayerTurn) {
-    var nextChoice;
-
-    if (tris3dCanvas.choosen.indexOf(13) === -1) {
-      // Get the center, if available.
-      nextChoice = 13;
-    } else {
-      nextChoice = smart(tris3dCanvas.choosen);
-    }
-
     // Just a little bit of random delay.
     var delay = 710 + Math.random() * 1700;
 
     setTimeout(function () {
+      var bot;
+
+      // Flip a coin, use smart ot bastar bot.
+      if (Math.random() < 0.5) {
+        bot = smart;
+      } else {
+        bot = bastard;
+      }
+
+      var nextChoice = bot(tris3dCanvas.choosen);
+
       tris3dCanvas.setChoice(nextChoice);
     }, delay);
   }
@@ -67,6 +70,7 @@ tris3dCanvas.on('tris3d!', function (winnerPlayerIndex, winningCombinations) {
 });
 
 tris3dCanvas.render();
+tris3dCanvas.startNewMatch();
 
 },{"tris3d-ai":6,"tris3d-canvas":11}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
@@ -43216,17 +43220,99 @@ exports.smart = require('./src/smart')
 exports.stupid = require('./src/stupid')
 
 },{"./src/bastard":7,"./src/smart":8,"./src/stupid":9}],7:[function(require,module,exports){
+var tris3d = require('tris3d')
+var smart = require('./smart')
+
 function bastard (choosen) {
   if (choosen.length === 27) {
     throw new Error('Are you stupid? There is no choice available.')
   }
 
-  // TODO
+  var otherPlayersWinningChoicesCount = {}
+  var previousPlayerChoices = []
+  var nextPlayerChoices = []
+
+  var coords0
+  var coords1
+  var coords2
+
+  var i
+  var j
+  var k
+
+  var isAvailable
+  var isWinningChoice
+
+  for (var byPrevious = choosen.length - 1; byPrevious >= 0; byPrevious -= 3) {
+    previousPlayerChoices.push(choosen[byPrevious])
+  }
+
+  for (var byNext = choosen.length - 2; byNext >= 0; byNext -= 3) {
+    nextPlayerChoices.push(choosen[byNext])
+  }
+
+  for (k = 1; k < previousPlayerChoices.length; k++) {
+    for (j = 0; j < k; j++) {
+      for (i = 0; i < 27; i++) {
+        coords0 = tris3d.coordinatesOfIndex(i)
+        coords1 = tris3d.coordinatesOfIndex(previousPlayerChoices[j])
+        coords2 = tris3d.coordinatesOfIndex(previousPlayerChoices[k])
+
+        isAvailable = (choosen.indexOf(i) === -1)
+        isWinningChoice = tris3d.isTris(coords0, coords1, coords2)
+
+        if (isWinningChoice && isAvailable) {
+          if (typeof otherPlayersWinningChoicesCount[i] === 'number') {
+            otherPlayersWinningChoicesCount[i]++
+          } else {
+            otherPlayersWinningChoicesCount[i] = 0
+          }
+        }
+      }
+    }
+  }
+
+  for (k = 1; k < nextPlayerChoices.length; k++) {
+    for (j = 0; j < k; j++) {
+      for (i = 0; i < 27; i++) {
+        coords0 = tris3d.coordinatesOfIndex(i)
+        coords1 = tris3d.coordinatesOfIndex(nextPlayerChoices[j])
+        coords2 = tris3d.coordinatesOfIndex(nextPlayerChoices[k])
+
+        isAvailable = (choosen.indexOf(i) === -1)
+        isWinningChoice = tris3d.isTris(coords0, coords1, coords2)
+
+        if (isWinningChoice && isAvailable) {
+          if (typeof otherPlayersWinningChoicesCount[i] === 'number') {
+            otherPlayersWinningChoicesCount[i]++
+          } else {
+            otherPlayersWinningChoicesCount[i] = 0
+          }
+        }
+      }
+    }
+  }
+
+  // Sort winning choices by their occurrence.
+  var otherPlayersWinningChoices = Object.keys(otherPlayersWinningChoicesCount)
+
+  if (otherPlayersWinningChoices.length > 0) {
+    otherPlayersWinningChoices.sort(function (a, b) {
+      if (otherPlayersWinningChoicesCount[a] < otherPlayersWinningChoicesCount[b]) return -1
+      if (otherPlayersWinningChoicesCount[a] === otherPlayersWinningChoicesCount[b]) return 0
+      if (otherPlayersWinningChoicesCount[a] > otherPlayersWinningChoicesCount[b]) return 1
+    })
+
+    return parseInt(otherPlayersWinningChoices[0])
+  }
+
+  // If no choice is found, behave like a smart AI.
+  return smart(choosen)
 }
 
 module.exports = bastard
 
-},{}],8:[function(require,module,exports){
+},{"./smart":8,"tris3d":10}],8:[function(require,module,exports){
 var tris3d = require('tris3d')
 var stupid = require('./stupid')
 
@@ -43244,15 +43330,15 @@ function smart (choosen) {
   for (var k = 1; k < myChoices.length; k++) {
     for (var j = 0; j < k; j++) {
       for (var i = 0; i < 27; i++) {
-        // Nothing to do if choice is not available.
-        if (choosen.indexOf[i] > -1) continue
-
         var coords0 = tris3d.coordinatesOfIndex(i)
         var coords1 = tris3d.coordinatesOfIndex(myChoices[j])
         var coords2 = tris3d.coordinatesOfIndex(myChoices[k])
 
-        // Check if it is a winning choice.
-        if (tris3d.isTris(coords0, coords1, coords2)) {
+        // Check if it is a winning choice available.
+        var isAvailable = (choosen.indexOf(i) === -1)
+        var isWinningChoice = tris3d.isTris(coords0, coords1, coords2)
+
+        if (isWinningChoice && isAvailable) {
           return i
         }
       }
@@ -43269,6 +43355,12 @@ module.exports = smart
 function stupid (choosen) {
   if (choosen.length === 27) {
     throw new Error('I am a stupid AI, but I understand that there is no choice available.')
+  }
+
+  // Get the center, if available...
+  if (choosen.indexOf(13) === -1) {
+    // ...not every time.
+    if (Math.random() < 0.5) return 13
   }
 
   var choice = Math.floor(Math.random() * 26)
@@ -43630,7 +43722,7 @@ var Tris3dCanvas = function (_EventEmitter) {
 
     _this.choosen = [];
     _this.localPlayerIndex = 0;
-    _this.isPlaying = true;
+    _this.isPlaying = false;
     _this.playerIndex = 0;
     _this.selectedCube = null;
 
@@ -43868,6 +43960,10 @@ var Tris3dCanvas = function (_EventEmitter) {
     value: function startNewMatch() {
       this.resetPlayground();
       this.isPlaying = true;
+
+      if (this.localPlayerIndex === 0) {
+        this.emit('localPlayerTurnStarts');
+      }
     }
   }]);
 
