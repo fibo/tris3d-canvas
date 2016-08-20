@@ -407,9 +407,7 @@ class Tris3dCanvas extends EventEmitter {
     this.resetPlayground()
     this.isPlaying = true
 
-    if (this.localPlayerIndex === 0) {
-      this.emit('localPlayerTurnStarts')
-    }
+    this.emit('nextPlayer', 0)
   }
 }
 
