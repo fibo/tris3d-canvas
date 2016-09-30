@@ -35,7 +35,7 @@ var Tris3dCanvas = function (_EventEmitter) {
     // Get canvas, its offset, width and height.
     // //////////////////////////////////////////////////////////////////////
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Tris3dCanvas).call(this));
+    var _this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this));
 
     var canvas = document.getElementById(id);
 
