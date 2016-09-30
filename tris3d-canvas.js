@@ -81,12 +81,6 @@ class Tris3dCanvas extends EventEmitter {
     // Add lights.
     // //////////////////////////////////////////////////////////////////////
 
-    /*
-    var directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-    directionalLight.position.set(100, 100, 50)
-    scene.add(directionalLight)
-    */
-
     var directionalLight0 = new THREE.DirectionalLight(0x808080)
     directionalLight0.position.x = 2
     directionalLight0.position.y = 1
@@ -413,9 +407,7 @@ class Tris3dCanvas extends EventEmitter {
     this.resetPlayground()
     this.isPlaying = true
 
-    if (this.localPlayerIndex === 0) {
-      this.emit('localPlayerTurnStarts')
-    }
+    this.emit('nextPlayer', 0)
   }
 }
 

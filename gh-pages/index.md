@@ -6,7 +6,6 @@ title: tris3d-canvas
 > is a canvas to play tic tac toe in 3d
 
 [Installation](#installation) |
-[Example](#example) |
 [API](#api) |
 [License](#license)
 
@@ -23,7 +22,7 @@ With [npm] do
 npm install tris3d-canvas
 ```
 
-## Example
+## API
 
 See [online example][online_example] or do the following to run [example.js][example_js]
 
@@ -31,8 +30,6 @@ See [online example][online_example] or do the following to run [example.js][exa
 npm install
 npm start
 ```
-
-## API
 
 ### `const tris3dCanvas = new Tris3dCanvas(canvasId)`
 
