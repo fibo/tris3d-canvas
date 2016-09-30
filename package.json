@@ -54,7 +54,7 @@
   "dependencies": {
     "events": "^1.1.1",
     "static-props": "^1.0.0",
-    "three": "^0.79.0",
-    "three-orbitcontrols": "github:fibo/three-orbitcontrols"
+    "three": "^0.81.2",
+    "three-orbitcontrols": "github:fibo/three-orbitcontrols#v1.1.1"
   }
 }
