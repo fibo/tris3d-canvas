@@ -72,7 +72,8 @@ class Tris3dCanvas extends EventEmitter {
     // Create renderer.
     // //////////////////////////////////////////////////////////////////////
 
-    const renderer = new THREE.WebGLRenderer({ canvas })
+    const context = canvas.getContext('webgl2')
+    const renderer = new THREE.WebGLRenderer({ canvas, context })
     renderer.setSize(width, height)
     renderer.setClearColor(0xeeeeee)
     renderer.setPixelRatio(window.devicePixelRatio)
