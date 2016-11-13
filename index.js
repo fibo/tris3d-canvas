@@ -100,23 +100,23 @@ var Tris3dCanvas = function (_EventEmitter) {
     // //////////////////////////////////////////////////////////////////////
 
     var directionalLight0 = new THREE.DirectionalLight(0x808080);
-    directionalLight0.position.x = 2;
-    directionalLight0.position.y = 1;
+    directionalLight0.position.x = 4;
+    directionalLight0.position.y = 2;
     directionalLight0.position.z = 0;
     directionalLight0.position.normalize();
     scene.add(directionalLight0);
 
     var directionalLight1 = new THREE.DirectionalLight(0x808080);
-    directionalLight1.position.x = 1;
-    directionalLight1.position.y = -2;
-    directionalLight1.position.z = 0;
+    directionalLight1.position.x = -2;
+    directionalLight1.position.y = 0;
+    directionalLight1.position.z = -4;
     directionalLight1.position.normalize();
     scene.add(directionalLight1);
 
     var directionalLight2 = new THREE.DirectionalLight(0x808080);
     directionalLight2.position.x = 0;
-    directionalLight2.position.y = 1;
-    directionalLight2.position.z = 1;
+    directionalLight2.position.y = -4;
+    directionalLight2.position.z = 2;
     directionalLight2.position.normalize();
     scene.add(directionalLight2);
 
@@ -129,6 +129,7 @@ var Tris3dCanvas = function (_EventEmitter) {
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
+    controls.enablePan = false;
     controls.enableZoom = false;
 
     // Init event listeners.
@@ -262,11 +263,11 @@ var Tris3dCanvas = function (_EventEmitter) {
     value: function render() {
       var self = this;
 
-      var camera = this.camera;
-      var cubeUuids = this.cubeUuids;
-      var neutral = this.neutral;
-      var renderer = this.renderer;
-      var scene = this.scene;
+      var camera = this.camera,
+          cubeUuids = this.cubeUuids,
+          neutral = this.neutral,
+          renderer = this.renderer,
+          scene = this.scene;
 
 
       var previousSelectedCube = null;

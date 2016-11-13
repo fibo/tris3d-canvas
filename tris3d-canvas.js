@@ -111,6 +111,7 @@ class Tris3dCanvas extends EventEmitter {
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
     controls.dampingFactor = 0.25
+    controls.enablePan = false
     controls.enableZoom = false
 
     // Init event listeners.
