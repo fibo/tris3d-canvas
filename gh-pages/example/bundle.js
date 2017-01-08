@@ -1,33 +1,17 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _tris3dCanvas = require('tris3d-canvas');
 
 var _tris3dCanvas2 = _interopRequireDefault(_tris3dCanvas);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var bastard = require('tris3d-ai').bastard;
+var bastard = require('tris3d-ai').bastard(0);
 var smart = require('tris3d-ai').smart;
 
 // Make console.log visible
-
-console.log = function consoleLog() {
-  var logger = document.getElementById('log');
-  var message = '';
-
-  for (var i = 0; i < arguments.length; i++) {
-    if (_typeof(arguments[i]) === 'object') {
-      message += (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + ' ';
-    } else {
-      message += arguments[i] + ' ';
-    }
-  }
-
-  logger.innerHTML = message + '<br/>' + logger.innerHTML;
-};
+require('console-log-div');
 
 var tris3dCanvas = new _tris3dCanvas2.default('demo');
 
@@ -91,7 +75,151 @@ tris3dCanvas.on('tris3d!', function (winnerPlayerIndex, winningCombinations) {
 tris3dCanvas.render();
 tris3dCanvas.startNewMatch();
 
-},{"tris3d-ai":11,"tris3d-canvas":13}],2:[function(require,module,exports){
+},{"console-log-div":2,"tris3d-ai":13,"tris3d-canvas":15}],2:[function(require,module,exports){
+(function initConsoleLogDiv() {
+  'use strict';
+
+
+  if (console.log.toDiv) {
+    return;
+  }
+
+  function toString(x) {
+    return typeof x === 'string' ? x : JSON.stringify(x);
+  }
+
+  var log = console.log.bind(console);
+  var error = console.error.bind(console);
+  var warn = console.warn.bind(console);
+  var table = console.table ? console.table.bind(console) : null;
+  var id = 'console-log-div';
+
+  function createOuterElement() {
+    var outer = document.getElementById(id);
+    if (!outer) {
+      outer = document.createElement('fieldset');
+      outer.id = id;
+      document.body.appendChild(outer);
+    }
+    outer.classList.add(id);
+
+    var style = outer.style;
+    // style.width = '100%';
+    // style.minHeight = '200px';
+    style.fontFamily = 'monospace';
+    style.marginTop = '20px';
+    style.marginLeft = '10px';
+    style.marginRight = '10px';
+    style.whiteSpace = 'pre';
+    style.border = '1px solid black';
+    style.borderRadius = '5px';
+    style.padding = '5px 10px';
+    return outer;
+  }
+
+  var logTo = (function createLogDiv() {
+
+    var outer = createOuterElement();
+
+    var caption = document.createTextNode('console output');
+    var legend = document.createElement('legend');
+    legend.appendChild(caption);
+    outer.appendChild(legend);
+
+    var div = document.createElement('div');
+    div.id = 'console-log-text';
+    outer.appendChild(div);
+
+    return div;
+  }());
+
+  function printToDiv() {
+    var msg = Array.prototype.slice.call(arguments, 0)
+      .map(toString)
+      .join(' ');
+    var text = logTo.textContent;
+    logTo.textContent = text + msg + '\n';
+  }
+
+  function logWithCopy() {
+    log.apply(null, arguments);
+    printToDiv.apply(null, arguments);
+  }
+
+  console.log = logWithCopy;
+  console.log.toDiv = true;
+
+  console.error = function errorWithCopy() {
+    error.apply(null, arguments);
+    var args = Array.prototype.slice.call(arguments, 0);
+    args.unshift('ERROR:');
+    printToDiv.apply(null, args);
+  };
+
+  console.warn = function logWarning() {
+    warn.apply(null, arguments);
+    var args = Array.prototype.slice.call(arguments, 0);
+    args.unshift('WARNING:');
+    printToDiv.apply(null, args);
+  };
+
+  function printTable(objArr, keys) {
+
+    var numCols = keys.length;
+    var len = objArr.length;
+    var $table = document.createElement('table');
+    $table.style.width = '100%';
+    $table.setAttribute('border', '1');
+    var $head = document.createElement('thead');
+    var $tdata = document.createElement('td');
+    $tdata.innerHTML = 'Index';
+    $head.appendChild($tdata);
+
+    for (var k = 0; k < numCols; k++) {
+      $tdata = document.createElement('td');
+      $tdata.innerHTML = keys[k];
+      $head.appendChild($tdata);
+    }
+    $table.appendChild($head);
+
+    for (var i = 0; i < len; i++) {
+      var $line = document.createElement('tr');
+      $tdata = document.createElement('td');
+      $tdata.innerHTML = i;
+      $line.appendChild($tdata);
+
+      for (var j = 0; j < numCols; j++) {
+        $tdata = document.createElement('td');
+        $tdata.innerHTML = objArr[i][keys[j]];
+        $line.appendChild($tdata);
+      }
+      $table.appendChild($line);
+    }
+    var div = document.getElementById('console-log-text');
+    div.appendChild($table);
+  }
+
+  console.table = function logTable() {
+    if (typeof table === 'function') {
+      table.apply(null, arguments);
+    }
+
+    var objArr = arguments[0];
+    var keys;
+
+    if (typeof objArr[0] !== 'undefined') {
+      keys = Object.keys(objArr[0]);
+    }
+    printTable(objArr, keys);
+  };
+
+  window.addEventListener('error', function (err) {
+    printToDiv( 'EXCEPTION:', err.message + '\n  ' + err.filename, err.lineno + ':' + err.colno);
+  });
+
+}());
+
+},{}],3:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -395,7 +523,10 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
+module.exports=function(x){return (typeof x==='undefined')||(x === null)}
+
+},{}],5:[function(require,module,exports){
 /**
  * @param {Object} obj
  * @returns {Function}
@@ -426,7 +557,7 @@ function staticProps (obj) {
 }
 module.exports = staticProps
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var THREE = require('three')
 
 /**
@@ -1448,7 +1579,7 @@ Object.defineProperties( OrbitControls.prototype, {
 
 module.exports = OrbitControls
 
-},{"three":5}],5:[function(require,module,exports){
+},{"three":7}],7:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -44794,7 +44925,7 @@ module.exports = OrbitControls
 
 })));
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 const tryToBlock = require('./tryToBlock')
@@ -44835,7 +44966,7 @@ function bastard (targetPlayer) {
 
 module.exports = bastard
 
-},{"./stupid":8,"./tryToBlock":9,"./victoryIsMine":10,"tris3d":12}],7:[function(require,module,exports){
+},{"./stupid":10,"./tryToBlock":11,"./victoryIsMine":12,"tris3d":14}],9:[function(require,module,exports){
 const victoryIsMine = require('./victoryIsMine')
 const stupid = require('./stupid')
 
@@ -44853,7 +44984,7 @@ function smart (choosen) {
 
 module.exports = smart
 
-},{"./stupid":8,"./victoryIsMine":10}],8:[function(require,module,exports){
+},{"./stupid":10,"./victoryIsMine":12}],10:[function(require,module,exports){
 function stupid (choosen) {
   if (choosen.length === 27) {
     throw new Error('I am a stupid AI, but I understand that there is no choice available.')
@@ -44890,7 +45021,7 @@ function stupid (choosen) {
 
 module.exports = stupid
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 /**
@@ -44930,7 +45061,7 @@ function tryToBlock (targetPlayer, choosen) {
 
 module.exports = tryToBlock
 
-},{"tris3d":12}],10:[function(require,module,exports){
+},{"tris3d":14}],12:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 /**
@@ -44972,12 +45103,12 @@ function victoryIsMine (choosen) {
 
 module.exports = victoryIsMine
 
-},{"tris3d":12}],11:[function(require,module,exports){
+},{"tris3d":14}],13:[function(require,module,exports){
 exports.bastard = require('./src/bastard')
 exports.smart = require('./src/smart')
 exports.stupid = require('./src/stupid')
 
-},{"./src/bastard":6,"./src/smart":7,"./src/stupid":8}],12:[function(require,module,exports){
+},{"./src/bastard":8,"./src/smart":9,"./src/stupid":10}],14:[function(require,module,exports){
 /**
  * Check if three points form a tris
  *
@@ -45130,7 +45261,7 @@ function coordinatesOfIndex (index) {
 
 exports.coordinatesOfIndex = coordinatesOfIndex
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -45146,6 +45277,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var EventEmitter = require('events');
+var no = require('not-defined');
 var OrbitControls = require('three-orbitcontrols');
 var staticProps = require('static-props');
 var THREE = require('three');
@@ -45158,30 +45290,43 @@ var Tris3dCanvas = function (_EventEmitter) {
    * Create a tris3d canvas
    *
    * @param {String} id of canvas element
+   * @param {Object} [opt]
+   * @param {Array} [opt.playerColors] are three colors, like 0xff0000
    *
    * @constructor
    */
 
-  function Tris3dCanvas(id) {
+  function Tris3dCanvas(id, opt) {
     _classCallCheck(this, Tris3dCanvas);
+
+    var _this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this));
+
+    var defaultPlayerColors = [0xff0000, 0x00ff00, 0x0000ff];
+
+    if (no(opt)) opt = {};
+
+    var playerColors = opt.playerColors || defaultPlayerColors;
 
     // Get canvas, its offset, width and height.
     // //////////////////////////////////////////////////////////////////////
 
-    var _this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this));
-
     var canvas = document.getElementById(id);
+    var parentElement = canvas.parentElement;
 
-    var offsetLeft = canvas.offsetLeft;
-    var offsetTop = canvas.offsetTop;
-    var width = canvas.width;
-    var height = canvas.height;
+    // Make canvas responsive by fill its parent.
+    var rect = parentElement.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height);
+    var width = size;
+    var height = size;
+
+    var style = 'margin:0; padding:0; width: 100%; height: auto;';
+    canvas.setAttribute('style', style);
 
     var cellSize = 1.7;
 
     var scene = new THREE.Scene();
 
-    var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    var camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     camera.position.z = 7.1;
 
     // Create 3x3x3 cubes.
@@ -45224,6 +45369,7 @@ var Tris3dCanvas = function (_EventEmitter) {
     // //////////////////////////////////////////////////////////////////////
 
     var renderer = new THREE.WebGLRenderer({ canvas: canvas });
+
     renderer.setSize(width, height);
     renderer.setClearColor(0xeeeeee);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -45289,10 +45435,12 @@ var Tris3dCanvas = function (_EventEmitter) {
       // otherwise the orbit control does not work.
       event.preventDefault();
 
+      var rect = parentElement.getBoundingClientRect();
+
       // Find intersected cubes.
 
-      var x = event.offsetX || event.clientX - offsetLeft;
-      var y = event.offsetY || event.clientY - offsetTop;
+      var x = event.offsetX || event.clientX - rect.left;
+      var y = event.offsetY || event.clientY - rect.top;
 
       var vector = new THREE.Vector3(x / width * 2 - 1, -(y / height) * 2 + 1, 1);
 
@@ -45321,8 +45469,6 @@ var Tris3dCanvas = function (_EventEmitter) {
     _this.isPlaying = false;
     _this.playerIndex = 0;
     _this.selectedCube = null;
-
-    var playerColors = [0xff0000, 0x00ff00, 0x0000ff];
 
     staticProps(_this)({
       camera: camera,
@@ -45359,6 +45505,20 @@ var Tris3dCanvas = function (_EventEmitter) {
     _this.on('nobodyWins', function () {
       _this.isPlaying = false;
     });
+
+    function onWindowResize() {
+      var rect = parentElement.getBoundingClientRect();
+      var size = Math.min(rect.height, rect.width);
+      var width = size;
+      var height = size;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
+    }
+
+    window.addEventListener('resize', onWindowResize, false);
     return _this;
   }
 
@@ -45566,4 +45726,4 @@ var Tris3dCanvas = function (_EventEmitter) {
 
 exports.default = Tris3dCanvas;
 
-},{"events":2,"static-props":3,"three":5,"three-orbitcontrols":4,"tris3d":12}]},{},[1]);
+},{"events":3,"not-defined":4,"static-props":5,"three":7,"three-orbitcontrols":6,"tris3d":14}]},{},[1]);

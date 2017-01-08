@@ -1,4 +1,5 @@
 const EventEmitter = require('events')
+const no = require('not-defined')
 const OrbitControls = require('three-orbitcontrols')
 const staticProps = require('static-props')
 const THREE = require('three')
@@ -9,28 +10,45 @@ class Tris3dCanvas extends EventEmitter {
    * Create a tris3d canvas
    *
    * @param {String} id of canvas element
+   * @param {Object} [opt]
+   * @param {Array} [opt.playerColors] are three colors, like 0xff0000
    *
    * @constructor
    */
 
-  constructor (id) {
+  constructor (id, opt) {
     super()
+
+    const defaultPlayerColors = [
+      0xff0000,
+      0x00ff00,
+      0x0000ff
+    ]
+
+    if (no(opt)) opt = {}
+
+    var playerColors = opt.playerColors || defaultPlayerColors
 
     // Get canvas, its offset, width and height.
     // //////////////////////////////////////////////////////////////////////
 
     const canvas = document.getElementById(id)
+    const parentElement = canvas.parentElement
 
-    var offsetLeft = canvas.offsetLeft
-    var offsetTop = canvas.offsetTop
-    var width = canvas.width
-    var height = canvas.height
+    // Make canvas responsive by fill its parent.
+    const rect = parentElement.getBoundingClientRect()
+    const size = Math.max(rect.width, rect.height)
+    const width = size
+    const height = size
+
+    const style = 'margin:0; padding:0; width: 100%; height: auto;'
+    canvas.setAttribute('style', style)
 
     const cellSize = 1.7
 
-    const scene = new THREE.Scene()
+    var scene = new THREE.Scene()
 
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+    var camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
     camera.position.z = 7.1
 
     // Create 3x3x3 cubes.
@@ -52,10 +70,10 @@ class Tris3dCanvas extends EventEmitter {
     for (let i = -1; i < 2; i++) {
       for (let j = -1; j < 2; j++) {
         for (let k = -1; k < 2; k++) {
-          const geometry = new THREE.BoxGeometry(1, 1, 1)
-          const material = new THREE.MeshLambertMaterial(neutral)
+          var geometry = new THREE.BoxGeometry(1, 1, 1)
+          var material = new THREE.MeshLambertMaterial(neutral)
 
-          const cube = new THREE.Mesh(geometry, material)
+          var cube = new THREE.Mesh(geometry, material)
           cubes.push(cube)
 
           cube.position.x = i * cellSize
@@ -72,7 +90,8 @@ class Tris3dCanvas extends EventEmitter {
     // Create renderer.
     // //////////////////////////////////////////////////////////////////////
 
-    const renderer = new THREE.WebGLRenderer({ canvas })
+    var renderer = new THREE.WebGLRenderer({ canvas })
+
     renderer.setSize(width, height)
     renderer.setClearColor(0xeeeeee)
     renderer.setPixelRatio(window.devicePixelRatio)
@@ -88,21 +107,21 @@ class Tris3dCanvas extends EventEmitter {
     directionalLight0.position.normalize()
     scene.add(directionalLight0)
 
-    var directionalLight1 = new THREE.DirectionalLight(0x808080)
+    const directionalLight1 = new THREE.DirectionalLight(0x808080)
     directionalLight1.position.x = -2
     directionalLight1.position.y = 0
     directionalLight1.position.z = -4
     directionalLight1.position.normalize()
     scene.add(directionalLight1)
 
-    var directionalLight2 = new THREE.DirectionalLight(0x808080)
+    const directionalLight2 = new THREE.DirectionalLight(0x808080)
     directionalLight2.position.x = 0
     directionalLight2.position.y = -4
     directionalLight2.position.z = 2
     directionalLight2.position.normalize()
     scene.add(directionalLight2)
 
-    var ambientLight = new THREE.AmbientLight(0x404040)
+    const ambientLight = new THREE.AmbientLight(0x404040)
     scene.add(ambientLight)
 
     // Navigation controls.
@@ -138,12 +157,14 @@ class Tris3dCanvas extends EventEmitter {
       // otherwise the orbit control does not work.
       event.preventDefault()
 
+      const rect = parentElement.getBoundingClientRect()
+
       // Find intersected cubes.
 
-      var x = (event.offsetX || event.clientX - offsetLeft)
-      var y = (event.offsetY || event.clientY - offsetTop)
+      const x = (event.offsetX || event.clientX - rect.left)
+      const y = (event.offsetY || event.clientY - rect.top)
 
-      var vector = new THREE.Vector3(
+      const vector = new THREE.Vector3(
         (x / width) * 2 - 1,
         -(y / height) * 2 + 1,
         1
@@ -151,8 +172,8 @@ class Tris3dCanvas extends EventEmitter {
 
       vector.unproject(camera)
 
-      var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
-      var intersectedCubes = ray.intersectObjects(cubes)
+      const ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
+      const intersectedCubes = ray.intersectObjects(cubes)
 
       // Set selected cube.
 
@@ -174,12 +195,6 @@ class Tris3dCanvas extends EventEmitter {
     this.isPlaying = false
     this.playerIndex = 0
     this.selectedCube = null
-
-    const playerColors = [
-      0xff0000,
-      0x00ff00,
-      0x0000ff
-    ]
 
     staticProps(this)({
       camera,
@@ -216,6 +231,20 @@ class Tris3dCanvas extends EventEmitter {
     this.on('nobodyWins', () => {
       this.isPlaying = false
     })
+
+    function onWindowResize () {
+      const rect = parentElement.getBoundingClientRect()
+      const size = Math.min(rect.height, rect.width)
+      const width = size
+      const height = size
+
+      camera.aspect = width / height
+      camera.updateProjectionMatrix()
+
+      renderer.setSize(width, height)
+    }
+
+    window.addEventListener('resize', onWindowResize, false)
   }
 
   /**

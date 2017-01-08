@@ -32,10 +32,12 @@ npm start
 
 > Constructor to create an instance of Tris3dCanvas.
 
-Create a canvas with attributes `id`, `width` and `height`
+Create a canvas with attribute `id`, inside a div container with `display: block` style
 
 ```html
-<canvas id="demo" width="500" height="500"></canvas>
+<div style="display: block">
+  <canvas id="demo"></canvas>
+</div>
 ```
 
 Then create a Tris3dCanvas object

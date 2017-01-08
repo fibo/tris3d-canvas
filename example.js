@@ -1,23 +1,9 @@
 import Tris3dCanvas from 'tris3d-canvas'
-const bastard = require('tris3d-ai').bastard
+const bastard = require('tris3d-ai').bastard(0)
 const smart = require('tris3d-ai').smart
 
 // Make console.log visible
-
-console.log = function consoleLog () {
-  const logger = document.getElementById('log')
-  var message = ''
-
-  for (var i = 0; i < arguments.length; i++) {
-    if (typeof arguments[i] === 'object') {
-      message += (JSON && JSON.stringify ? JSON.stringify(arguments[i], undefined, 2) : arguments[i]) + ' '
-    } else {
-      message += arguments[i] + ' '
-    }
-  }
-
-  logger.innerHTML = message + '<br/>' + logger.innerHTML
-}
+require('console-log-div')
 
 const tris3dCanvas = new Tris3dCanvas('demo')
 

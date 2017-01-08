@@ -13,6 +13,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var EventEmitter = require('events');
+var no = require('not-defined');
 var OrbitControls = require('three-orbitcontrols');
 var staticProps = require('static-props');
 var THREE = require('three');
@@ -25,30 +26,43 @@ var Tris3dCanvas = function (_EventEmitter) {
    * Create a tris3d canvas
    *
    * @param {String} id of canvas element
+   * @param {Object} [opt]
+   * @param {Array} [opt.playerColors] are three colors, like 0xff0000
    *
    * @constructor
    */
 
-  function Tris3dCanvas(id) {
+  function Tris3dCanvas(id, opt) {
     _classCallCheck(this, Tris3dCanvas);
+
+    var _this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this));
+
+    var defaultPlayerColors = [0xff0000, 0x00ff00, 0x0000ff];
+
+    if (no(opt)) opt = {};
+
+    var playerColors = opt.playerColors || defaultPlayerColors;
 
     // Get canvas, its offset, width and height.
     // //////////////////////////////////////////////////////////////////////
 
-    var _this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this));
-
     var canvas = document.getElementById(id);
+    var parentElement = canvas.parentElement;
 
-    var offsetLeft = canvas.offsetLeft;
-    var offsetTop = canvas.offsetTop;
-    var width = canvas.width;
-    var height = canvas.height;
+    // Make canvas responsive by fill its parent.
+    var rect = parentElement.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height);
+    var width = size;
+    var height = size;
+
+    var style = 'margin:0; padding:0; width: 100%; height: auto;';
+    canvas.setAttribute('style', style);
 
     var cellSize = 1.7;
 
     var scene = new THREE.Scene();
 
-    var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    var camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     camera.position.z = 7.1;
 
     // Create 3x3x3 cubes.
@@ -91,6 +105,7 @@ var Tris3dCanvas = function (_EventEmitter) {
     // //////////////////////////////////////////////////////////////////////
 
     var renderer = new THREE.WebGLRenderer({ canvas: canvas });
+
     renderer.setSize(width, height);
     renderer.setClearColor(0xeeeeee);
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -156,10 +171,12 @@ var Tris3dCanvas = function (_EventEmitter) {
       // otherwise the orbit control does not work.
       event.preventDefault();
 
+      var rect = parentElement.getBoundingClientRect();
+
       // Find intersected cubes.
 
-      var x = event.offsetX || event.clientX - offsetLeft;
-      var y = event.offsetY || event.clientY - offsetTop;
+      var x = event.offsetX || event.clientX - rect.left;
+      var y = event.offsetY || event.clientY - rect.top;
 
       var vector = new THREE.Vector3(x / width * 2 - 1, -(y / height) * 2 + 1, 1);
 
@@ -188,8 +205,6 @@ var Tris3dCanvas = function (_EventEmitter) {
     _this.isPlaying = false;
     _this.playerIndex = 0;
     _this.selectedCube = null;
-
-    var playerColors = [0xff0000, 0x00ff00, 0x0000ff];
 
     staticProps(_this)({
       camera: camera,
@@ -226,6 +241,20 @@ var Tris3dCanvas = function (_EventEmitter) {
     _this.on('nobodyWins', function () {
       _this.isPlaying = false;
     });
+
+    function onWindowResize() {
+      var rect = parentElement.getBoundingClientRect();
+      var size = Math.min(rect.height, rect.width);
+      var width = size;
+      var height = size;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
+    }
+
+    window.addEventListener('resize', onWindowResize, false);
     return _this;
   }
 
