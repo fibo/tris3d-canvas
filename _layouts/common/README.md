@@ -2,16 +2,9 @@
 
 > is a git subtree containing Jekyll layouts used across my personal website
 
-The following g14n.info microsites are involved:
+## Microsite
 
-<!--
-* [algebra](http://g14n.info/algebra)
-* [dflow](http://g14n.info/dflow)
-* [flow-view](http://g14n.info/flow-view)
-* [geohash-neighbours](http://g14n.info/geohash-neighbours)
-* [iper](http://g14n.info/iper)
--->
-* [tris3d-canvas](http://g14n.info/tris3d-canvas)
+By **microsite** I mean a subset of a website. For example `http://example.org/my-microsite`.
 
 ## Setup
 
@@ -34,13 +27,13 @@ layout: common/page
 
 ### Add remote
 
-```
+```bash
 git remote add common_layouts git@github.com:fibo/g14n.info-jekyll-layouts.git
 ```
 
 ### Add subtree
 
-```
+```bash
 git subtree add --prefix=gh-pages/_layouts/common/ common_layouts master
 ```
 
@@ -50,25 +43,38 @@ If you are in a new cloned repo, you need to [add remote](#add-remote) first.
 
 In a working tree with all modifications committed, launch
 
-```
+```bash
 git subtree --prefix=gh-pages/_layouts/common/ pull common_layouts master
 ```
 
 ## Content
 
-### responsive-side-menu.html
+### page
+
+Use it for every [microsite] basic page. See [example page](http://g14n.info/templates/page/).
 
 Requires
 
-* variable `site.domain`.
-* file *_data/package.json* containing attribute *name*.
-* file *_data/menu.yml* containing menu entries and their href.
+* Exists resource `//style.css`.
+* Optional `site.lang`, defaults to *en*.
+* Variable `page.title`, or `site.data.package.name`
+* List of `keywords` in `page` or `site.data.package`.
+* Variable `description` in `page` or `site.data.package`.
+* A `nav` hash with menu items. If `page.nav` is not found, it will look for `site.nav`.
 
-Follows a sample *menu.yml*
+Follows a sample YAML frontmatter
 
 ```yaml
-Example: example
-API: api
+title: My title
+description: example
+keywords:
+  - pizza
+  - mafia
+nav:
+  Pizza: /pizza
+  Mafia: '#mafia'
+  Mandolino: //g14n.info
 ```
 
+[microsite](#microsite)
 [g14n.info-jekyll-includes]: https://github.com/fibo/g14n.info-jekyll-includes "g14n.info-jekyll-includes"
