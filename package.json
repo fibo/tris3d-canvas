@@ -47,6 +47,7 @@
     "check-deps"
   ],
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "standard": "^8.6.0",
     "tris3d-ai": "^0.6.0",
     "zeroconf-redux": "^0.11.0"
