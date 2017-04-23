@@ -1,4 +1,4 @@
 *.swp
-gh-pages/_site
+docs/_site/
 node_modules
 npm-debug.log
