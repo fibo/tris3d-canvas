@@ -18,11 +18,9 @@
     "homepage": "echo \"---\ntitle: $npm_package_name\n---\" > docs/index.md; cat README.md >> docs/index.md",
     "jekyll": "npm run cp_package.json; npm run homepage; cd docs; jekyll build; cd ..",
     "lint": "standard example.js tris3d-canvas.js",
-    "postupdate-deps": "git commit -am ':arrow_up: updated deps' || git checkout -- package.json",
-    "postversion": "git push origin v${npm_package_version}; npm publish; npm run push",
+    "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
     "start": "NODE_PATH=. budo example.js -d . -l -o -- -t babelify",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "update-deps": "npm update --save --dev"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -44,17 +42,15 @@
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "console-log-div": "^0.6.3",
-    "standard": "^8.6.0",
-    "tris3d-ai": "^0.6.0",
-    "zeroconf-redux": "^0.11.0"
+    "standard": "^10.0.2",
+    "tris3d-ai": "^0.6.0"
   },
   "dependencies": {
     "babel-cli": "^6.24.1",
     "events": "^1.1.1",
     "not-defined": "^1.1.0",
     "static-props": "^1.0.2",
-    "three": "^0.83.0",
-    "three-orbitcontrols": "^1.1.2",
-    "zeroconf-redux": "^0.11.1"
+    "three": "^0.85.0",
+    "three-orbitcontrols": "^1.2.0"
   }
 }
