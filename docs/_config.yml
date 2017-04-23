@@ -7,7 +7,7 @@ gems:
 markdown: kramdown
 
 nav:
-  Home: //g14n.info/tris3d-canvas/
+  Home: //g14n.info/tris3d-canvas
   Example: //g14n.info/tris3d-canvas/example/
   Code: https://github.com/fibo/tris3d-canvas
 
