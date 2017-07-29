@@ -50,7 +50,6 @@
   },
   "dependencies": {
     "events": "^1.1.1",
-    "not-defined": "^1.1.0",
     "static-props": "^1.1.0",
     "three": "^0.86.0",
     "three-orbitcontrols": "^1.2.1"

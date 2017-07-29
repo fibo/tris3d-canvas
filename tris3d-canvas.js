@@ -1,5 +1,4 @@
 const EventEmitter = require('events')
-const no = require('not-defined')
 const OrbitControls = require('three-orbitcontrols')
 const staticProps = require('static-props')
 const THREE = require('three')
@@ -16,7 +15,7 @@ class Tris3dCanvas extends EventEmitter {
    * @constructor
    */
 
-  constructor (id, opt) {
+  constructor (id, opt = {}) {
     super()
 
     const defaultPlayerColors = [
@@ -24,8 +23,6 @@ class Tris3dCanvas extends EventEmitter {
       0x00ff00,
       0x0000ff
     ]
-
-    if (no(opt)) opt = {}
 
     var playerColors = opt.playerColors || defaultPlayerColors
 
