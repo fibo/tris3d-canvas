@@ -13,7 +13,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var EventEmitter = require('events');
-var no = require('not-defined');
 var OrbitControls = require('three-orbitcontrols');
 var staticProps = require('static-props');
 var THREE = require('three');
@@ -32,14 +31,14 @@ var Tris3dCanvas = function (_EventEmitter) {
    * @constructor
    */
 
-  function Tris3dCanvas(id, opt) {
+  function Tris3dCanvas(id) {
+    var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     _classCallCheck(this, Tris3dCanvas);
 
     var _this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this));
 
     var defaultPlayerColors = [0xff0000, 0x00ff00, 0x0000ff];
-
-    if (no(opt)) opt = {};
 
     var playerColors = opt.playerColors || defaultPlayerColors;
 

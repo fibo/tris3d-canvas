@@ -75,7 +75,7 @@ tris3dCanvas.on('tris3d!', function (winnerPlayerIndex, winningCombinations) {
 tris3dCanvas.render();
 tris3dCanvas.startNewMatch();
 
-},{"console-log-div":2,"tris3d-ai":13,"tris3d-canvas":15}],2:[function(require,module,exports){
+},{"console-log-div":2,"tris3d-ai":12,"tris3d-canvas":14}],2:[function(require,module,exports){
 (function initConsoleLogDiv() {
   'use strict';
 
@@ -524,9 +524,6 @@ function isUndefined(arg) {
 }
 
 },{}],4:[function(require,module,exports){
-module.exports=function(x){return (typeof x==='undefined')||(x === null)}
-
-},{}],5:[function(require,module,exports){
 /**
  * @param {Object} obj
  * @returns {Function}
@@ -557,7 +554,7 @@ function staticProps (obj) {
 }
 module.exports = exports.default = staticProps
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var THREE = require('three')
 
 /**
@@ -1605,7 +1602,7 @@ Object.defineProperties( OrbitControls.prototype, {
 
 module.exports = OrbitControls
 
-},{"three":7}],7:[function(require,module,exports){
+},{"three":6}],6:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -45717,7 +45714,7 @@ module.exports = OrbitControls
 
 })));
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 const tryToBlock = require('./tryToBlock')
@@ -45758,7 +45755,7 @@ function bastard (targetPlayer) {
 
 module.exports = bastard
 
-},{"./stupid":10,"./tryToBlock":11,"./victoryIsMine":12,"tris3d":14}],9:[function(require,module,exports){
+},{"./stupid":9,"./tryToBlock":10,"./victoryIsMine":11,"tris3d":13}],8:[function(require,module,exports){
 const victoryIsMine = require('./victoryIsMine')
 const stupid = require('./stupid')
 
@@ -45776,7 +45773,7 @@ function smart (choosen) {
 
 module.exports = smart
 
-},{"./stupid":10,"./victoryIsMine":12}],10:[function(require,module,exports){
+},{"./stupid":9,"./victoryIsMine":11}],9:[function(require,module,exports){
 function stupid (choosen) {
   if (choosen.length === 27) {
     throw new Error('I am a stupid AI, but I understand that there is no choice available.')
@@ -45813,7 +45810,7 @@ function stupid (choosen) {
 
 module.exports = stupid
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 /**
@@ -45850,7 +45847,7 @@ function tryToBlock (targetPlayer, choosen) {
 
 module.exports = tryToBlock
 
-},{"tris3d":14}],12:[function(require,module,exports){
+},{"tris3d":13}],11:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 /**
@@ -45889,7 +45886,7 @@ function victoryIsMine (choosen) {
 
 module.exports = victoryIsMine
 
-},{"tris3d":14}],13:[function(require,module,exports){
+},{"tris3d":13}],12:[function(require,module,exports){
 var bastard = require('./src/bastard')
 var smart = require('./src/smart')
 var stupid = require('./src/stupid')
@@ -45904,7 +45901,7 @@ exports.default = {
   stupid: stupid
 }
 
-},{"./src/bastard":8,"./src/smart":9,"./src/stupid":10}],14:[function(require,module,exports){
+},{"./src/bastard":7,"./src/smart":8,"./src/stupid":9}],13:[function(require,module,exports){
 /**
  * Check if three points form a tris
  *
@@ -46057,7 +46054,7 @@ function coordinatesOfIndex (index) {
 
 exports.coordinatesOfIndex = coordinatesOfIndex
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -46073,7 +46070,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var EventEmitter = require('events');
-var no = require('not-defined');
 var OrbitControls = require('three-orbitcontrols');
 var staticProps = require('static-props');
 var THREE = require('three');
@@ -46092,14 +46088,14 @@ var Tris3dCanvas = function (_EventEmitter) {
    * @constructor
    */
 
-  function Tris3dCanvas(id, opt) {
+  function Tris3dCanvas(id) {
+    var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     _classCallCheck(this, Tris3dCanvas);
 
     var _this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this));
 
     var defaultPlayerColors = [0xff0000, 0x00ff00, 0x0000ff];
-
-    if (no(opt)) opt = {};
 
     var playerColors = opt.playerColors || defaultPlayerColors;
 
@@ -46522,4 +46518,4 @@ var Tris3dCanvas = function (_EventEmitter) {
 
 exports.default = Tris3dCanvas;
 
-},{"events":3,"not-defined":4,"static-props":5,"three":7,"three-orbitcontrols":6,"tris3d":14}]},{},[1]);
+},{"events":3,"static-props":4,"three":6,"three-orbitcontrols":5,"tris3d":13}]},{},[1]);
