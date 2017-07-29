@@ -290,7 +290,7 @@ var Tris3dCanvas = function (_EventEmitter) {
   }, {
     key: 'render',
     value: function render() {
-      var self = this;
+      var _this2 = this;
 
       var camera = this.camera,
           cubeUuids = this.cubeUuids,
@@ -305,40 +305,40 @@ var Tris3dCanvas = function (_EventEmitter) {
       // The main 3d loop.
       // //////////////////////////////////////////////////////////////////////
 
-      function isNotAvaliable(cube) {
+      var isNotAvaliable = function isNotAvaliable(cube) {
         var cubeIndex = cubeUuids.indexOf(cube.uuid);
-        return self.choosen.indexOf(cubeIndex) !== -1;
-      }
+        return _this2.choosen.indexOf(cubeIndex) !== -1;
+      };
 
-      function lowlight(cube) {
+      var lowlight = function lowlight(cube) {
         // Do nothing if cube is already choosen.
         if (isNotAvaliable(cube)) return;
 
         cube.material.opacity = neutral.opacity;
         cube.material.color.setHex(neutral.color);
-      }
+      };
 
-      function highlight(cube) {
+      var highlight = function highlight(cube) {
         // Do nothing if cube is already choosen.
         if (isNotAvaliable(cube)) return;
 
         var highlitedOpacity = 0.71;
         cube.material.opacity = highlitedOpacity;
 
-        var isMyTurn = self.localPlayerIndex === self.playerIndex;
+        var isMyTurn = _this2.localPlayerIndex === _this2.playerIndex;
 
         if (isMyTurn) {
-          var color = self.playerColors[self.playerIndex];
+          var color = _this2.playerColors[_this2.playerIndex];
           cube.material.color.setHex(color);
         }
-      }
+      };
 
-      function loop() {
+      var loop = function loop() {
         previousSelectedCube = selectedCube;
-        selectedCube = self.selectedCube;
+        selectedCube = _this2.selectedCube;
 
         // Highlight selected cube.
-        if (self.isPlaying) {
+        if (_this2.isPlaying) {
           if (selectedCube) {
             if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
               lowlight(previousSelectedCube);
@@ -355,7 +355,7 @@ var Tris3dCanvas = function (_EventEmitter) {
         renderer.render(scene, camera);
 
         window.requestAnimationFrame(loop);
-      }
+      };
 
       loop(); // Oh yeah!
     }

@@ -275,8 +275,6 @@ class Tris3dCanvas extends EventEmitter {
    */
 
   render () {
-    const self = this
-
     const {
       camera,
       cubeUuids,
@@ -291,12 +289,12 @@ class Tris3dCanvas extends EventEmitter {
     // The main 3d loop.
     // //////////////////////////////////////////////////////////////////////
 
-    function isNotAvaliable (cube) {
+    const isNotAvaliable = (cube) => {
       var cubeIndex = cubeUuids.indexOf(cube.uuid)
-      return self.choosen.indexOf(cubeIndex) !== -1
+      return this.choosen.indexOf(cubeIndex) !== -1
     }
 
-    function lowlight (cube) {
+    const lowlight = (cube) => {
       // Do nothing if cube is already choosen.
       if (isNotAvaliable(cube)) return
 
@@ -304,27 +302,27 @@ class Tris3dCanvas extends EventEmitter {
       cube.material.color.setHex(neutral.color)
     }
 
-    function highlight (cube) {
+    const highlight = (cube) => {
       // Do nothing if cube is already choosen.
       if (isNotAvaliable(cube)) return
 
       const highlitedOpacity = 0.71
       cube.material.opacity = highlitedOpacity
 
-      const isMyTurn = (self.localPlayerIndex === self.playerIndex)
+      const isMyTurn = (this.localPlayerIndex === this.playerIndex)
 
       if (isMyTurn) {
-        const color = self.playerColors[self.playerIndex]
+        const color = this.playerColors[this.playerIndex]
         cube.material.color.setHex(color)
       }
     }
 
-    function loop () {
+    const loop = () => {
       previousSelectedCube = selectedCube
-      selectedCube = self.selectedCube
+      selectedCube = this.selectedCube
 
       // Highlight selected cube.
-      if (self.isPlaying) {
+      if (this.isPlaying) {
         if (selectedCube) {
           if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
             lowlight(previousSelectedCube)
