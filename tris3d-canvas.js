@@ -1,3 +1,4 @@
+const bindme = require('bindme')
 const EventEmitter = require('events')
 const OrbitControls = require('three-orbitcontrols')
 const staticProps = require('static-props')
@@ -16,7 +17,11 @@ class Tris3dCanvas extends EventEmitter {
    */
 
   constructor (id, opt = {}) {
-    super()
+    bindme(super(),
+      'onMousedown',
+      'onMousemove',
+      'resize'
+    )
 
     const defaultPlayerColors = [
       0xff0000,
@@ -24,16 +29,15 @@ class Tris3dCanvas extends EventEmitter {
       0x0000ff
     ]
 
-    var playerColors = opt.playerColors || defaultPlayerColors
+    let playerColors = opt.playerColors || defaultPlayerColors
 
     // Get canvas, its offset, width and height.
     // //////////////////////////////////////////////////////////////////////
 
     const canvas = document.getElementById(id)
-    const parentElement = canvas.parentElement
 
     // Make canvas responsive by fill its parent.
-    const rect = parentElement.getBoundingClientRect()
+    const rect = canvas.parentElement.getBoundingClientRect()
     const size = Math.max(rect.width, rect.height)
     const width = size
     const height = size
@@ -43,19 +47,19 @@ class Tris3dCanvas extends EventEmitter {
 
     const cellSize = 1.7
 
-    var scene = new THREE.Scene()
+    const scene = new THREE.Scene()
 
-    var camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
     camera.position.z = 7.1
 
     // Create 3x3x3 cubes.
     // //////////////////////////////////////////////////////////////////////
 
     // The 3d cubes array.
-    var cubes = []
+    let cubes = []
 
     // Remember (mesh cube) <--> (cell) association, using cube uuids.
-    var cubeUuids = []
+    let cubeUuids = []
 
     // Default materials.
     const neutral = {
@@ -67,10 +71,10 @@ class Tris3dCanvas extends EventEmitter {
     for (let i = -1; i < 2; i++) {
       for (let j = -1; j < 2; j++) {
         for (let k = -1; k < 2; k++) {
-          var geometry = new THREE.BoxGeometry(1, 1, 1)
-          var material = new THREE.MeshLambertMaterial(neutral)
+          const geometry = new THREE.BoxGeometry(1, 1, 1)
+          const material = new THREE.MeshLambertMaterial(neutral)
 
-          var cube = new THREE.Mesh(geometry, material)
+          const cube = new THREE.Mesh(geometry, material)
           cubes.push(cube)
 
           cube.position.x = i * cellSize
@@ -87,7 +91,7 @@ class Tris3dCanvas extends EventEmitter {
     // Create renderer.
     // //////////////////////////////////////////////////////////////////////
 
-    var renderer = new THREE.WebGLRenderer({ canvas })
+    const renderer = new THREE.WebGLRenderer({ canvas })
 
     renderer.setSize(width, height)
     renderer.setClearColor(0xeeeeee)
@@ -97,7 +101,7 @@ class Tris3dCanvas extends EventEmitter {
     // Add lights.
     // //////////////////////////////////////////////////////////////////////
 
-    var directionalLight0 = new THREE.DirectionalLight(0x808080)
+    const directionalLight0 = new THREE.DirectionalLight(0x808080)
     directionalLight0.position.x = 4
     directionalLight0.position.y = 2
     directionalLight0.position.z = 0
@@ -133,56 +137,8 @@ class Tris3dCanvas extends EventEmitter {
     // Init event listeners.
     // //////////////////////////////////////////////////////////////////////
 
-    function onMouseDown (event) {
-      event.preventDefault()
-      event.stopPropagation()
-
-      if (this.isPlaying) {
-        const localPlayerIndex = this.localPlayerIndex
-        const playerIndex = this.playerIndex
-        const selectedCube = this.selectedCube
-
-        if (selectedCube && (playerIndex === localPlayerIndex)) {
-          var cubeIndex = cubeUuids.indexOf(selectedCube.uuid)
-          this.setChoice(cubeIndex)
-        }
-      }
-    }
-
-    function onMouseMove (event) {
-      // Cannot call `event.stopPropagation()`,
-      // otherwise the orbit control does not work.
-      event.preventDefault()
-
-      const rect = parentElement.getBoundingClientRect()
-
-      // Find intersected cubes.
-
-      const x = (event.offsetX || event.clientX - rect.left)
-      const y = (event.offsetY || event.clientY - rect.top)
-
-      const vector = new THREE.Vector3(
-        (x / width) * 2 - 1,
-        -(y / height) * 2 + 1,
-        1
-      )
-
-      vector.unproject(camera)
-
-      const ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
-      const intersectedCubes = ray.intersectObjects(cubes)
-
-      // Set selected cube.
-
-      if (intersectedCubes.length > 0) {
-        this.selectedCube = intersectedCubes[0].object
-      } else {
-        this.selectedCube = null
-      }
-    }
-
-    canvas.addEventListener('mousemove', onMouseMove.bind(this), false)
-    canvas.addEventListener('mousedown', onMouseDown.bind(this), false)
+    canvas.addEventListener('mousemove', this.onMousemove, false)
+    canvas.addEventListener('mousedown', this.onMousedown, false)
 
     // Class attributes.
     // //////////////////////////////////////////////////////////////////////
@@ -229,19 +185,11 @@ class Tris3dCanvas extends EventEmitter {
       this.isPlaying = false
     })
 
-    function onWindowResize () {
-      const rect = parentElement.getBoundingClientRect()
-      const size = Math.min(rect.height, rect.width)
-      const width = size
-      const height = size
+    window.addEventListener('resize', this.resize, false)
+  }
 
-      camera.aspect = width / height
-      camera.updateProjectionMatrix()
-
-      renderer.setSize(width, height)
-    }
-
-    window.addEventListener('resize', onWindowResize, false)
+  getBoundingClientRect () {
+    return this.canvas.parentElement.getBoundingClientRect()
   }
 
   /**
@@ -249,7 +197,7 @@ class Tris3dCanvas extends EventEmitter {
    */
 
   highlightTris (winningCombinations) {
-    var winningCubes = []
+    let winningCubes = []
 
     // Get all winning cube indexes without repetitions.
     winningCombinations.forEach((winningCombination) => {
@@ -267,6 +215,63 @@ class Tris3dCanvas extends EventEmitter {
     })
   }
 
+  onMousedown (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const {
+      cubeUuids,
+      localPlayerIndex,
+      isPlaying,
+      playerIndex,
+      selectedCube
+    } = this
+
+    if (isPlaying) {
+      if (selectedCube && (playerIndex === localPlayerIndex)) {
+        const cubeIndex = cubeUuids.indexOf(selectedCube.uuid)
+        this.setChoice(cubeIndex)
+      }
+    }
+  }
+
+  onMousemove (event) {
+    // Cannot call `event.stopPropagation()`,
+    // otherwise the orbit control does not work.
+    event.preventDefault()
+
+    const {
+      camera,
+      cubes
+    } = this
+
+    const rect = this.getBoundingClientRect()
+
+    // Find intersected cubes.
+
+    const x = (event.offsetX || event.clientX - rect.left)
+    const y = (event.offsetY || event.clientY - rect.top)
+
+    const vector = new THREE.Vector3(
+      (x / rect.width) * 2 - 1,
+      -(y / rect.height) * 2 + 1,
+      1
+    )
+
+    vector.unproject(camera)
+
+    const ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
+    const intersectedCubes = ray.intersectObjects(cubes)
+
+    // Set selected cube.
+
+    if (intersectedCubes.length > 0) {
+      this.selectedCube = intersectedCubes[0].object
+    } else {
+      this.selectedCube = null
+    }
+  }
+
   /**
    * Start rendering the 3d scene.
    */
@@ -280,14 +285,14 @@ class Tris3dCanvas extends EventEmitter {
       scene
     } = this
 
-    var previousSelectedCube = null
-    var selectedCube = null
+    let previousSelectedCube = null
+    let selectedCube = null
 
     // The main 3d loop.
     // //////////////////////////////////////////////////////////////////////
 
     const isNotAvaliable = (cube) => {
-      var cubeIndex = cubeUuids.indexOf(cube.uuid)
+      const cubeIndex = cubeUuids.indexOf(cube.uuid)
       return this.choosen.indexOf(cubeIndex) !== -1
     }
 
@@ -342,6 +347,28 @@ class Tris3dCanvas extends EventEmitter {
   }
 
   /**
+   * Trigger window resize.
+   */
+
+  resize () {
+    const {
+      camera,
+      canvas,
+      renderer
+    } = this
+
+    const rect = this.getBoundingClientRect()
+    const size = Math.min(rect.height, rect.width)
+    const width = size
+    const height = size
+
+    camera.aspect = width / height
+    camera.updateProjectionMatrix()
+
+    renderer.setSize(width, height)
+  }
+
+  /**
    * Set player choice.
    */
 
@@ -365,21 +392,21 @@ class Tris3dCanvas extends EventEmitter {
     // //////////////////////////////////////////////////////////////////////
 
     // Get player choices.
-    var playerChoices = []
+    let playerChoices = []
 
-    for (var i = numberOfChoices - 1; i >= 0; i -= 3) {
+    for (let i = numberOfChoices - 1; i >= 0; i -= 3) {
       playerChoices.push(this.choosen[i])
     }
 
     // A choice can lead to more that one winning combination.
-    var winningCombinations = []
+    let winningCombinations = []
 
     // For every combination, check if it wins.
-    for (var k = 2; k < playerChoices.length; k++) {
-      for (var j = 1; j < k; j++) {
-        var coords0 = tris3d.coordinatesOfIndex(playerChoices[0])
-        var coords1 = tris3d.coordinatesOfIndex(playerChoices[j])
-        var coords2 = tris3d.coordinatesOfIndex(playerChoices[k])
+    for (let k = 2; k < playerChoices.length; k++) {
+      for (let j = 1; j < k; j++) {
+        const coords0 = tris3d.coordinatesOfIndex(playerChoices[0])
+        const coords1 = tris3d.coordinatesOfIndex(playerChoices[j])
+        const coords2 = tris3d.coordinatesOfIndex(playerChoices[k])
 
         if (tris3d.isTris(coords0, coords1, coords2)) {
           winningCombinations.push([

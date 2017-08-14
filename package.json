@@ -49,6 +49,7 @@
     "tris3d-ai": "^0.6.1"
   },
   "dependencies": {
+    "bindme": "^1.0.0",
     "events": "^1.1.1",
     "static-props": "^1.1.0",
     "three": "^0.86.0",

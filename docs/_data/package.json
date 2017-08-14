@@ -1,7 +1,7 @@
 {
   "name": "tris3d-canvas",
   "description": "is a canvas to play tic tac toe in 3d",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "homepage": "http://g14n.info/tris3d-canvas",
   "author": {
     "name": "Gianluca Casati",
@@ -49,6 +49,7 @@
     "tris3d-ai": "^0.6.1"
   },
   "dependencies": {
+    "bindme": "^1.0.0",
     "events": "^1.1.1",
     "static-props": "^1.1.0",
     "three": "^0.86.0",

@@ -75,7 +75,15 @@ tris3dCanvas.on('tris3d!', function (winnerPlayerIndex, winningCombinations) {
 tris3dCanvas.render();
 tris3dCanvas.startNewMatch();
 
-},{"console-log-div":2,"tris3d-ai":12,"tris3d-canvas":14}],2:[function(require,module,exports){
+},{"console-log-div":3,"tris3d-ai":13,"tris3d-canvas":15}],2:[function(require,module,exports){
+function bindme (self) {
+  Array.prototype.slice.call(arguments, 1).forEach(function (func) {
+    self[func] = self[func].bind(self)
+  })
+}
+module.exports = bindme
+
+},{}],3:[function(require,module,exports){
 (function initConsoleLogDiv() {
   'use strict';
 
@@ -219,7 +227,7 @@ tris3dCanvas.startNewMatch();
 
 }());
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -523,7 +531,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /**
  * @param {Object} obj
  * @returns {Function}
@@ -554,7 +562,7 @@ function staticProps (obj) {
 }
 module.exports = exports.default = staticProps
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var THREE = require('three')
 
 /**
@@ -1602,7 +1610,7 @@ Object.defineProperties( OrbitControls.prototype, {
 
 module.exports = OrbitControls
 
-},{"three":6}],6:[function(require,module,exports){
+},{"three":7}],7:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -45714,7 +45722,7 @@ module.exports = OrbitControls
 
 })));
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 const tryToBlock = require('./tryToBlock')
@@ -45755,7 +45763,7 @@ function bastard (targetPlayer) {
 
 module.exports = bastard
 
-},{"./stupid":9,"./tryToBlock":10,"./victoryIsMine":11,"tris3d":13}],8:[function(require,module,exports){
+},{"./stupid":10,"./tryToBlock":11,"./victoryIsMine":12,"tris3d":14}],9:[function(require,module,exports){
 const victoryIsMine = require('./victoryIsMine')
 const stupid = require('./stupid')
 
@@ -45773,7 +45781,7 @@ function smart (choosen) {
 
 module.exports = smart
 
-},{"./stupid":9,"./victoryIsMine":11}],9:[function(require,module,exports){
+},{"./stupid":10,"./victoryIsMine":12}],10:[function(require,module,exports){
 function stupid (choosen) {
   if (choosen.length === 27) {
     throw new Error('I am a stupid AI, but I understand that there is no choice available.')
@@ -45810,7 +45818,7 @@ function stupid (choosen) {
 
 module.exports = stupid
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 /**
@@ -45847,7 +45855,7 @@ function tryToBlock (targetPlayer, choosen) {
 
 module.exports = tryToBlock
 
-},{"tris3d":13}],11:[function(require,module,exports){
+},{"tris3d":14}],12:[function(require,module,exports){
 const tris3d = require('tris3d')
 
 /**
@@ -45886,7 +45894,7 @@ function victoryIsMine (choosen) {
 
 module.exports = victoryIsMine
 
-},{"tris3d":13}],12:[function(require,module,exports){
+},{"tris3d":14}],13:[function(require,module,exports){
 var bastard = require('./src/bastard')
 var smart = require('./src/smart')
 var stupid = require('./src/stupid')
@@ -45901,7 +45909,7 @@ exports.default = {
   stupid: stupid
 }
 
-},{"./src/bastard":7,"./src/smart":8,"./src/stupid":9}],13:[function(require,module,exports){
+},{"./src/bastard":8,"./src/smart":9,"./src/stupid":10}],14:[function(require,module,exports){
 /**
  * Check if three points form a tris
  *
@@ -46054,7 +46062,7 @@ function coordinatesOfIndex (index) {
 
 exports.coordinatesOfIndex = coordinatesOfIndex
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -46069,6 +46077,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var bindme = require('bindme');
 var EventEmitter = require('events');
 var OrbitControls = require('three-orbitcontrols');
 var staticProps = require('static-props');
@@ -46089,11 +46098,13 @@ var Tris3dCanvas = function (_EventEmitter) {
    */
 
   function Tris3dCanvas(id) {
+    var _this;
+
     var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, Tris3dCanvas);
 
-    var _this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this));
+    bindme((_this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this)), _this), 'onMousedown', 'onMousemove', 'resize');
 
     var defaultPlayerColors = [0xff0000, 0x00ff00, 0x0000ff];
 
@@ -46103,10 +46114,9 @@ var Tris3dCanvas = function (_EventEmitter) {
     // //////////////////////////////////////////////////////////////////////
 
     var canvas = document.getElementById(id);
-    var parentElement = canvas.parentElement;
 
     // Make canvas responsive by fill its parent.
-    var rect = parentElement.getBoundingClientRect();
+    var rect = canvas.parentElement.getBoundingClientRect();
     var size = Math.max(rect.width, rect.height);
     var width = size;
     var height = size;
@@ -46206,52 +46216,8 @@ var Tris3dCanvas = function (_EventEmitter) {
     // Init event listeners.
     // //////////////////////////////////////////////////////////////////////
 
-    function onMouseDown(event) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (this.isPlaying) {
-        var localPlayerIndex = this.localPlayerIndex;
-        var playerIndex = this.playerIndex;
-        var selectedCube = this.selectedCube;
-
-        if (selectedCube && playerIndex === localPlayerIndex) {
-          var cubeIndex = cubeUuids.indexOf(selectedCube.uuid);
-          this.setChoice(cubeIndex);
-        }
-      }
-    }
-
-    function onMouseMove(event) {
-      // Cannot call `event.stopPropagation()`,
-      // otherwise the orbit control does not work.
-      event.preventDefault();
-
-      var rect = parentElement.getBoundingClientRect();
-
-      // Find intersected cubes.
-
-      var x = event.offsetX || event.clientX - rect.left;
-      var y = event.offsetY || event.clientY - rect.top;
-
-      var vector = new THREE.Vector3(x / width * 2 - 1, -(y / height) * 2 + 1, 1);
-
-      vector.unproject(camera);
-
-      var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-      var intersectedCubes = ray.intersectObjects(cubes);
-
-      // Set selected cube.
-
-      if (intersectedCubes.length > 0) {
-        this.selectedCube = intersectedCubes[0].object;
-      } else {
-        this.selectedCube = null;
-      }
-    }
-
-    canvas.addEventListener('mousemove', onMouseMove.bind(_this), false);
-    canvas.addEventListener('mousedown', onMouseDown.bind(_this), false);
+    canvas.addEventListener('mousemove', _this.onMousemove, false);
+    canvas.addEventListener('mousedown', _this.onMousedown, false);
 
     // Class attributes.
     // //////////////////////////////////////////////////////////////////////
@@ -46298,27 +46264,21 @@ var Tris3dCanvas = function (_EventEmitter) {
       _this.isPlaying = false;
     });
 
-    function onWindowResize() {
-      var rect = parentElement.getBoundingClientRect();
-      var size = Math.min(rect.height, rect.width);
-      var width = size;
-      var height = size;
-
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-
-      renderer.setSize(width, height);
-    }
-
-    window.addEventListener('resize', onWindowResize, false);
+    window.addEventListener('resize', _this.resize, false);
     return _this;
   }
 
-  /**
-   * Improve winning combinations visibility.
-   */
-
   _createClass(Tris3dCanvas, [{
+    key: 'getBoundingClientRect',
+    value: function getBoundingClientRect() {
+      return this.canvas.parentElement.getBoundingClientRect();
+    }
+
+    /**
+     * Improve winning combinations visibility.
+     */
+
+  }, {
     key: 'highlightTris',
     value: function highlightTris(winningCombinations) {
       var winningCubes = [];
@@ -46337,6 +46297,59 @@ var Tris3dCanvas = function (_EventEmitter) {
           cube.material.transparent = true;
         }
       });
+    }
+  }, {
+    key: 'onMousedown',
+    value: function onMousedown(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      var cubeUuids = this.cubeUuids,
+          localPlayerIndex = this.localPlayerIndex,
+          isPlaying = this.isPlaying,
+          playerIndex = this.playerIndex,
+          selectedCube = this.selectedCube;
+
+
+      if (isPlaying) {
+        if (selectedCube && playerIndex === localPlayerIndex) {
+          var cubeIndex = cubeUuids.indexOf(selectedCube.uuid);
+          this.setChoice(cubeIndex);
+        }
+      }
+    }
+  }, {
+    key: 'onMousemove',
+    value: function onMousemove(event) {
+      // Cannot call `event.stopPropagation()`,
+      // otherwise the orbit control does not work.
+      event.preventDefault();
+
+      var camera = this.camera,
+          cubes = this.cubes;
+
+
+      var rect = this.getBoundingClientRect();
+
+      // Find intersected cubes.
+
+      var x = event.offsetX || event.clientX - rect.left;
+      var y = event.offsetY || event.clientY - rect.top;
+
+      var vector = new THREE.Vector3(x / rect.width * 2 - 1, -(y / rect.height) * 2 + 1, 1);
+
+      vector.unproject(camera);
+
+      var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+      var intersectedCubes = ray.intersectObjects(cubes);
+
+      // Set selected cube.
+
+      if (intersectedCubes.length > 0) {
+        this.selectedCube = intersectedCubes[0].object;
+      } else {
+        this.selectedCube = null;
+      }
     }
 
     /**
@@ -46414,6 +46427,29 @@ var Tris3dCanvas = function (_EventEmitter) {
       };
 
       loop(); // Oh yeah!
+    }
+
+    /**
+     * Trigger window resize.
+     */
+
+  }, {
+    key: 'resize',
+    value: function resize() {
+      var camera = this.camera,
+          canvas = this.canvas,
+          renderer = this.renderer;
+
+
+      var rect = this.getBoundingClientRect();
+      var size = Math.min(rect.height, rect.width);
+      var width = size;
+      var height = size;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
     }
 
     /**
@@ -46518,4 +46554,4 @@ var Tris3dCanvas = function (_EventEmitter) {
 
 exports.default = Tris3dCanvas;
 
-},{"events":3,"static-props":4,"three":6,"three-orbitcontrols":5,"tris3d":13}]},{},[1]);
+},{"bindme":2,"events":4,"static-props":5,"three":7,"three-orbitcontrols":6,"tris3d":14}]},{},[1]);
