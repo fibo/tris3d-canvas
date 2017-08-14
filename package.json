@@ -17,7 +17,7 @@
     "cp_package.json": "cp package.json docs/_data/",
     "homepage": "echo \"---\ntitle: $npm_package_name\n---\" > docs/index.md; cat README.md >> docs/index.md",
     "jekyll": "npm run cp_package.json; npm run homepage; cd docs; jekyll build; cd ..",
-    "lint": "standard example.js tris3d-canvas.js",
+    "lint": "standa example.js tris3d-canvas.js",
     "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
     "start": "NODE_PATH=. budo example.js -d . -l -o -- -t babelify",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -45,7 +45,7 @@
     "babelify": "^7.3.0",
     "budo": "^10.0.4",
     "console-log-div": "^0.6.3",
-    "standard": "^10.0.2",
+    "standa": "^1.0.0",
     "tris3d-ai": "^0.6.1"
   },
   "dependencies": {
