@@ -28,7 +28,7 @@ npm install
 npm start
 ```
 
-### `const tris3dCanvas = new Tris3dCanvas(canvasId)`
+### `const tris3dCanvas = new Tris3dCanvas(canvasId, opts)`
 
 > Constructor to create an instance of Tris3dCanvas.
 
@@ -45,6 +45,14 @@ Then create a Tris3dCanvas object
 ```javascript
 const tris3dCanvas = new Tris3dCanvas('demo')
 ```
+
+Optional parameters are accepted after `canvasId`, constructor signature
+is the following:
+
+* **@param** `{String}` **id** of canvas element
+* **@param** `{Object}` **[opt]** optional parameters
+* **@param** `{Array}` **[opt.playerColors]** are three colors, like 0xff0000
+* **@param** `{Array}` **[opt.backgroundColor]** defaults to 0xffffff
 
 ### `tris3dCanvas.localPlayerIndex`
 

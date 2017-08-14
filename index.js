@@ -26,8 +26,9 @@ var Tris3dCanvas = function (_EventEmitter) {
    * Create a tris3d canvas
    *
    * @param {String} id of canvas element
-   * @param {Object} [opt]
+   * @param {Object} [opt] optional parameters
    * @param {Array} [opt.playerColors] are three colors, like 0xff0000
+   * @param {Array} [opt.backgroundColor] defaults to 0xffffff
    *
    * @constructor
    */
@@ -41,8 +42,10 @@ var Tris3dCanvas = function (_EventEmitter) {
 
     bindme((_this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this)), _this), 'onMousedown', 'onMousemove', 'resize');
 
+    var defaultBackgroundColor = 0xffffff;
     var defaultPlayerColors = [0xff0000, 0x00ff00, 0x0000ff];
 
+    var backgroundColor = opt.backgroundColor || defaultBackgroundColor;
     var playerColors = opt.playerColors || defaultPlayerColors;
 
     // Get canvas, its offset, width and height.
@@ -77,7 +80,7 @@ var Tris3dCanvas = function (_EventEmitter) {
 
     // Default materials.
     var neutral = {
-      color: 0x000000,
+      color: 0x333333,
       opacity: 0.17,
       transparent: true
     };
@@ -85,7 +88,7 @@ var Tris3dCanvas = function (_EventEmitter) {
     for (var i = -1; i < 2; i++) {
       for (var j = -1; j < 2; j++) {
         for (var k = -1; k < 2; k++) {
-          var geometry = new THREE.BoxGeometry(1, 1, 1);
+          var geometry = new THREE.BoxGeometry(0.917, 0.917, 0.917);
           var material = new THREE.MeshLambertMaterial(neutral);
 
           var cube = new THREE.Mesh(geometry, material);
@@ -108,33 +111,54 @@ var Tris3dCanvas = function (_EventEmitter) {
     var renderer = new THREE.WebGLRenderer({ canvas: canvas });
 
     renderer.setSize(width, height);
-    renderer.setClearColor(0xeeeeee);
+    renderer.setClearColor(backgroundColor);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.sortObjects = false;
 
     // Add lights.
     // //////////////////////////////////////////////////////////////////////
 
-    var directionalLight0 = new THREE.DirectionalLight(0x808080);
-    directionalLight0.position.x = 4;
-    directionalLight0.position.y = 2;
+    var directionalLight0 = new THREE.DirectionalLight(0xe7feff);
+    directionalLight0.position.x = 6;
+    directionalLight0.position.y = -4;
     directionalLight0.position.z = 0;
     directionalLight0.position.normalize();
     scene.add(directionalLight0);
 
-    var directionalLight1 = new THREE.DirectionalLight(0x808080);
-    directionalLight1.position.x = -2;
+    var directionalLight1 = new THREE.DirectionalLight(0xe7feff);
+    directionalLight1.position.x = -3;
     directionalLight1.position.y = 0;
-    directionalLight1.position.z = -4;
+    directionalLight1.position.z = 5;
     directionalLight1.position.normalize();
     scene.add(directionalLight1);
 
-    var directionalLight2 = new THREE.DirectionalLight(0x808080);
+    var directionalLight2 = new THREE.DirectionalLight(0xe7feff);
     directionalLight2.position.x = 0;
-    directionalLight2.position.y = -4;
-    directionalLight2.position.z = 2;
+    directionalLight2.position.y = 9;
+    directionalLight2.position.z = -5;
     directionalLight2.position.normalize();
     scene.add(directionalLight2);
+
+    var directionalLight3 = new THREE.DirectionalLight(0xe7feff);
+    directionalLight3.position.x = -2;
+    directionalLight3.position.y = 4;
+    directionalLight3.position.z = 0;
+    directionalLight3.position.normalize();
+    scene.add(directionalLight3);
+
+    var directionalLight4 = new THREE.DirectionalLight(0xe7feff);
+    directionalLight4.position.x = 3;
+    directionalLight4.position.y = 0;
+    directionalLight4.position.z = -2;
+    directionalLight4.position.normalize();
+    scene.add(directionalLight4);
+
+    var directionalLight5 = new THREE.DirectionalLight(0xe7feff);
+    directionalLight5.position.x = 0;
+    directionalLight5.position.y = -7;
+    directionalLight5.position.z = 1;
+    directionalLight5.position.normalize();
+    scene.add(directionalLight5);
 
     var ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);

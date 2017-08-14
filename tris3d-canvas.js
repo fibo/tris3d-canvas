@@ -10,8 +10,9 @@ class Tris3dCanvas extends EventEmitter {
    * Create a tris3d canvas
    *
    * @param {String} id of canvas element
-   * @param {Object} [opt]
+   * @param {Object} [opt] optional parameters
    * @param {Array} [opt.playerColors] are three colors, like 0xff0000
+   * @param {Array} [opt.backgroundColor] defaults to 0xffffff
    *
    * @constructor
    */
@@ -23,12 +24,14 @@ class Tris3dCanvas extends EventEmitter {
       'resize'
     )
 
+    const defaultBackgroundColor = 0xffffff
     const defaultPlayerColors = [
       0xff0000,
       0x00ff00,
       0x0000ff
     ]
 
+    const backgroundColor = opt.backgroundColor || defaultBackgroundColor
     let playerColors = opt.playerColors || defaultPlayerColors
 
     // Get canvas, its offset, width and height.
@@ -63,7 +66,7 @@ class Tris3dCanvas extends EventEmitter {
 
     // Default materials.
     const neutral = {
-      color: 0x000000,
+      color: 0x333333,
       opacity: 0.17,
       transparent: true
     }
@@ -71,7 +74,7 @@ class Tris3dCanvas extends EventEmitter {
     for (let i = -1; i < 2; i++) {
       for (let j = -1; j < 2; j++) {
         for (let k = -1; k < 2; k++) {
-          const geometry = new THREE.BoxGeometry(1, 1, 1)
+          const geometry = new THREE.BoxGeometry(0.917, 0.917, 0.917)
           const material = new THREE.MeshLambertMaterial(neutral)
 
           const cube = new THREE.Mesh(geometry, material)
@@ -94,33 +97,54 @@ class Tris3dCanvas extends EventEmitter {
     const renderer = new THREE.WebGLRenderer({ canvas })
 
     renderer.setSize(width, height)
-    renderer.setClearColor(0xeeeeee)
+    renderer.setClearColor(backgroundColor)
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.sortObjects = false
 
     // Add lights.
     // //////////////////////////////////////////////////////////////////////
 
-    const directionalLight0 = new THREE.DirectionalLight(0x808080)
-    directionalLight0.position.x = 4
-    directionalLight0.position.y = 2
+    const directionalLight0 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight0.position.x = 6
+    directionalLight0.position.y = -4
     directionalLight0.position.z = 0
     directionalLight0.position.normalize()
     scene.add(directionalLight0)
 
-    const directionalLight1 = new THREE.DirectionalLight(0x808080)
-    directionalLight1.position.x = -2
+    const directionalLight1 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight1.position.x = -3
     directionalLight1.position.y = 0
-    directionalLight1.position.z = -4
+    directionalLight1.position.z = 5
     directionalLight1.position.normalize()
     scene.add(directionalLight1)
 
-    const directionalLight2 = new THREE.DirectionalLight(0x808080)
+    const directionalLight2 = new THREE.DirectionalLight(0xe7feff)
     directionalLight2.position.x = 0
-    directionalLight2.position.y = -4
-    directionalLight2.position.z = 2
+    directionalLight2.position.y = 9
+    directionalLight2.position.z = -5
     directionalLight2.position.normalize()
     scene.add(directionalLight2)
+
+    const directionalLight3 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight3.position.x = -2
+    directionalLight3.position.y = 4
+    directionalLight3.position.z = 0
+    directionalLight3.position.normalize()
+    scene.add(directionalLight3)
+
+    const directionalLight4 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight4.position.x = 3
+    directionalLight4.position.y = 0
+    directionalLight4.position.z = -2
+    directionalLight4.position.normalize()
+    scene.add(directionalLight4)
+
+    const directionalLight5 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight5.position.x = 0
+    directionalLight5.position.y = -7
+    directionalLight5.position.z = 1
+    directionalLight5.position.normalize()
+    scene.add(directionalLight5)
 
     const ambientLight = new THREE.AmbientLight(0x404040)
     scene.add(ambientLight)
