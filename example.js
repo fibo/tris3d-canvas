@@ -1,4 +1,4 @@
-import Tris3dCanvas from 'tris3d-canvas'
+const Tris3dCanvas = require('tris3d-canvas')
 const bastard = require('tris3d-ai').bastard(0)
 const smart = require('tris3d-ai').smart
 

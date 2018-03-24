@@ -487,4 +487,4 @@ class Tris3dCanvas extends EventEmitter {
   }
 }
 
-export default Tris3dCanvas
+module.exports = exports.default = Tris3dCanvas

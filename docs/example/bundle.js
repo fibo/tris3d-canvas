@@ -1,79 +1,73 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-var _tris3dCanvas = require('tris3d-canvas');
-
-var _tris3dCanvas2 = _interopRequireDefault(_tris3dCanvas);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var bastard = require('tris3d-ai').bastard(0);
-var smart = require('tris3d-ai').smart;
+const Tris3dCanvas = require('tris3d-canvas')
+const bastard = require('tris3d-ai').bastard(0)
+const smart = require('tris3d-ai').smart
 
 // Make console.log visible
-require('console-log-div');
+require('console-log-div')
 
-var tris3dCanvas = new _tris3dCanvas2.default('demo');
+const tris3dCanvas = new Tris3dCanvas('demo')
 
-tris3dCanvas.on('localPlayerTurnEnds', function () {
-  console.log('wait for other players choices');
-});
+tris3dCanvas.on('localPlayerTurnEnds', () => {
+  console.log('wait for other players choices')
+})
 
-tris3dCanvas.on('localPlayerTurnStarts', function () {
-  console.log('is my turn');
-});
+tris3dCanvas.on('localPlayerTurnStarts', () => {
+  console.log('is my turn')
+})
 
-tris3dCanvas.on('nextPlayer', function (playerIndex) {
-  console.log('nextPlayer', playerIndex);
+tris3dCanvas.on('nextPlayer', (playerIndex) => {
+  console.log('nextPlayer', playerIndex)
 
-  var isOtherPlayerTurn = tris3dCanvas.localPlayerIndex !== playerIndex;
+  const isOtherPlayerTurn = (tris3dCanvas.localPlayerIndex !== playerIndex)
 
   // Bot choices.
   if (isOtherPlayerTurn) {
     // Just a little bit of random delay.
-    var delay = 710 + Math.random() * 1700;
+    var delay = 710 + Math.random() * 1700
 
-    setTimeout(function () {
-      var bot;
+    setTimeout(() => {
+      var bot
 
       // Flip a coin, use smart ot bastar bot.
       if (Math.random() < 0.5) {
-        bot = smart;
+        bot = smart
       } else {
-        bot = bastard;
+        bot = bastard
       }
 
-      var nextChoice = bot(tris3dCanvas.choosen);
+      var nextChoice = bot(tris3dCanvas.choosen)
 
-      tris3dCanvas.setChoice(nextChoice);
-    }, delay);
+      tris3dCanvas.setChoice(nextChoice)
+    }, delay)
   }
-});
+})
 
-tris3dCanvas.on('nobodyWins', function () {
-  console.log('Nobody wins :(');
+tris3dCanvas.on('nobodyWins', () => {
+  console.log('Nobody wins :(')
 
-  setTimeout(function () {
-    tris3dCanvas.startNewMatch();
-  }, 1700);
-});
+  setTimeout(() => {
+    tris3dCanvas.startNewMatch()
+  }, 1700)
+})
 
-tris3dCanvas.on('setChoice', function (cubeIndex) {
-  console.log('setChoice', cubeIndex);
-});
+tris3dCanvas.on('setChoice', (cubeIndex) => {
+  console.log('setChoice', cubeIndex)
+})
 
-tris3dCanvas.on('tris3d!', function (winnerPlayerIndex, winningCombinations) {
-  console.log('tris3d!');
-  console.log('winnerPlayerIndex', winnerPlayerIndex);
-  console.log('winningCombinations', winningCombinations);
+tris3dCanvas.on('tris3d!', (winnerPlayerIndex, winningCombinations) => {
+  console.log('tris3d!')
+  console.log('winnerPlayerIndex', winnerPlayerIndex)
+  console.log('winningCombinations', winningCombinations)
 
-  setTimeout(function () {
-    tris3dCanvas.startNewMatch();
-  }, 7100);
-});
+  setTimeout(() => {
+    tris3dCanvas.startNewMatch()
+  }, 7100)
+})
 
-tris3dCanvas.render();
-tris3dCanvas.startNewMatch();
+tris3dCanvas.render()
+tris3dCanvas.startNewMatch()
+
 
 },{"console-log-div":3,"tris3d-ai":13,"tris3d-canvas":15}],2:[function(require,module,exports){
 function bindme (self) {
@@ -46063,30 +46057,14 @@ function coordinatesOfIndex (index) {
 exports.coordinatesOfIndex = coordinatesOfIndex
 
 },{}],15:[function(require,module,exports){
-'use strict';
+const bindme = require('bindme')
+const EventEmitter = require('events')
+const OrbitControls = require('three-orbitcontrols')
+const staticProps = require('static-props')
+const THREE = require('three')
+const tris3d = require('tris3d')
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var bindme = require('bindme');
-var EventEmitter = require('events');
-var OrbitControls = require('three-orbitcontrols');
-var staticProps = require('static-props');
-var THREE = require('three');
-var tris3d = require('tris3d');
-
-var Tris3dCanvas = function (_EventEmitter) {
-  _inherits(Tris3dCanvas, _EventEmitter);
-
+class Tris3dCanvas extends EventEmitter {
   /**
    * Create a tris3d canvas
    *
@@ -46098,74 +46076,76 @@ var Tris3dCanvas = function (_EventEmitter) {
    * @constructor
    */
 
-  function Tris3dCanvas(id) {
-    var _this;
+  constructor (id, opt = {}) {
+    bindme(super(),
+      'onMousedown',
+      'onMousemove',
+      'resize'
+    )
 
-    var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    const defaultBackgroundColor = 0xffffff
+    const defaultPlayerColors = [
+      0xff0000,
+      0x00ff00,
+      0x0000ff
+    ]
 
-    _classCallCheck(this, Tris3dCanvas);
-
-    bindme((_this = _possibleConstructorReturn(this, (Tris3dCanvas.__proto__ || Object.getPrototypeOf(Tris3dCanvas)).call(this)), _this), 'onMousedown', 'onMousemove', 'resize');
-
-    var defaultBackgroundColor = 0xffffff;
-    var defaultPlayerColors = [0xff0000, 0x00ff00, 0x0000ff];
-
-    var backgroundColor = opt.backgroundColor || defaultBackgroundColor;
-    var playerColors = opt.playerColors || defaultPlayerColors;
+    const backgroundColor = opt.backgroundColor || defaultBackgroundColor
+    let playerColors = opt.playerColors || defaultPlayerColors
 
     // Get canvas, its offset, width and height.
     // //////////////////////////////////////////////////////////////////////
 
-    var canvas = document.getElementById(id);
+    const canvas = document.getElementById(id)
 
     // Make canvas responsive by fill its parent.
-    var rect = canvas.parentElement.getBoundingClientRect();
-    var size = Math.max(rect.width, rect.height);
-    var width = size;
-    var height = size;
+    const rect = canvas.parentElement.getBoundingClientRect()
+    const size = Math.max(rect.width, rect.height)
+    const width = size
+    const height = size
 
-    var style = 'margin:0; padding:0; width: 100%; height: auto;';
-    canvas.setAttribute('style', style);
+    const style = 'margin:0; padding:0; width: 100%; height: auto;'
+    canvas.setAttribute('style', style)
 
-    var cellSize = 1.7;
+    const cellSize = 1.7
 
-    var scene = new THREE.Scene();
+    const scene = new THREE.Scene()
 
-    var camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    camera.position.z = 7.1;
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
+    camera.position.z = 7.1
 
     // Create 3x3x3 cubes.
     // //////////////////////////////////////////////////////////////////////
 
     // The 3d cubes array.
-    var cubes = [];
+    let cubes = []
 
     // Remember (mesh cube) <--> (cell) association, using cube uuids.
-    var cubeUuids = [];
+    let cubeUuids = []
 
     // Default materials.
-    var neutral = {
+    const neutral = {
       color: 0x333333,
       opacity: 0.17,
       transparent: true
-    };
+    }
 
-    for (var i = -1; i < 2; i++) {
-      for (var j = -1; j < 2; j++) {
-        for (var k = -1; k < 2; k++) {
-          var geometry = new THREE.BoxGeometry(0.917, 0.917, 0.917);
-          var material = new THREE.MeshLambertMaterial(neutral);
+    for (let i = -1; i < 2; i++) {
+      for (let j = -1; j < 2; j++) {
+        for (let k = -1; k < 2; k++) {
+          const geometry = new THREE.BoxGeometry(0.917, 0.917, 0.917)
+          const material = new THREE.MeshLambertMaterial(neutral)
 
-          var cube = new THREE.Mesh(geometry, material);
-          cubes.push(cube);
+          const cube = new THREE.Mesh(geometry, material)
+          cubes.push(cube)
 
-          cube.position.x = i * cellSize;
-          cube.position.y = j * cellSize;
-          cube.position.z = k * cellSize;
+          cube.position.x = i * cellSize
+          cube.position.y = j * cellSize
+          cube.position.z = k * cellSize
 
-          scene.add(cube);
+          scene.add(cube)
 
-          cubeUuids.push(cube.uuid);
+          cubeUuids.push(cube.uuid)
         }
       }
     }
@@ -46173,409 +46153,399 @@ var Tris3dCanvas = function (_EventEmitter) {
     // Create renderer.
     // //////////////////////////////////////////////////////////////////////
 
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas });
+    const renderer = new THREE.WebGLRenderer({ canvas })
 
-    renderer.setSize(width, height);
-    renderer.setClearColor(backgroundColor);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.sortObjects = false;
+    renderer.setSize(width, height)
+    renderer.setClearColor(backgroundColor)
+    renderer.setPixelRatio(window.devicePixelRatio)
+    renderer.sortObjects = false
 
     // Add lights.
     // //////////////////////////////////////////////////////////////////////
 
-    var directionalLight0 = new THREE.DirectionalLight(0xe7feff);
-    directionalLight0.position.x = 6;
-    directionalLight0.position.y = -4;
-    directionalLight0.position.z = 0;
-    directionalLight0.position.normalize();
-    scene.add(directionalLight0);
+    const directionalLight0 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight0.position.x = 6
+    directionalLight0.position.y = -4
+    directionalLight0.position.z = 0
+    directionalLight0.position.normalize()
+    scene.add(directionalLight0)
 
-    var directionalLight1 = new THREE.DirectionalLight(0xe7feff);
-    directionalLight1.position.x = -3;
-    directionalLight1.position.y = 0;
-    directionalLight1.position.z = 5;
-    directionalLight1.position.normalize();
-    scene.add(directionalLight1);
+    const directionalLight1 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight1.position.x = -3
+    directionalLight1.position.y = 0
+    directionalLight1.position.z = 5
+    directionalLight1.position.normalize()
+    scene.add(directionalLight1)
 
-    var directionalLight2 = new THREE.DirectionalLight(0xe7feff);
-    directionalLight2.position.x = 0;
-    directionalLight2.position.y = 9;
-    directionalLight2.position.z = -5;
-    directionalLight2.position.normalize();
-    scene.add(directionalLight2);
+    const directionalLight2 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight2.position.x = 0
+    directionalLight2.position.y = 9
+    directionalLight2.position.z = -5
+    directionalLight2.position.normalize()
+    scene.add(directionalLight2)
 
-    var directionalLight3 = new THREE.DirectionalLight(0xe7feff);
-    directionalLight3.position.x = -2;
-    directionalLight3.position.y = 4;
-    directionalLight3.position.z = 0;
-    directionalLight3.position.normalize();
-    scene.add(directionalLight3);
+    const directionalLight3 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight3.position.x = -2
+    directionalLight3.position.y = 4
+    directionalLight3.position.z = 0
+    directionalLight3.position.normalize()
+    scene.add(directionalLight3)
 
-    var directionalLight4 = new THREE.DirectionalLight(0xe7feff);
-    directionalLight4.position.x = 3;
-    directionalLight4.position.y = 0;
-    directionalLight4.position.z = -2;
-    directionalLight4.position.normalize();
-    scene.add(directionalLight4);
+    const directionalLight4 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight4.position.x = 3
+    directionalLight4.position.y = 0
+    directionalLight4.position.z = -2
+    directionalLight4.position.normalize()
+    scene.add(directionalLight4)
 
-    var directionalLight5 = new THREE.DirectionalLight(0xe7feff);
-    directionalLight5.position.x = 0;
-    directionalLight5.position.y = -7;
-    directionalLight5.position.z = 1;
-    directionalLight5.position.normalize();
-    scene.add(directionalLight5);
+    const directionalLight5 = new THREE.DirectionalLight(0xe7feff)
+    directionalLight5.position.x = 0
+    directionalLight5.position.y = -7
+    directionalLight5.position.z = 1
+    directionalLight5.position.normalize()
+    scene.add(directionalLight5)
 
-    var ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(ambientLight);
+    const ambientLight = new THREE.AmbientLight(0x404040)
+    scene.add(ambientLight)
 
     // Navigation controls.
     // //////////////////////////////////////////////////////////////////////
 
-    var controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.25;
-    controls.enablePan = false;
-    controls.enableZoom = false;
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableDamping = true
+    controls.dampingFactor = 0.25
+    controls.enablePan = false
+    controls.enableZoom = false
 
     // Init event listeners.
     // //////////////////////////////////////////////////////////////////////
 
-    canvas.addEventListener('mousemove', _this.onMousemove, false);
-    canvas.addEventListener('mousedown', _this.onMousedown, false);
+    canvas.addEventListener('mousemove', this.onMousemove, false)
+    canvas.addEventListener('mousedown', this.onMousedown, false)
 
     // Class attributes.
     // //////////////////////////////////////////////////////////////////////
 
-    _this.choosen = [];
-    _this.localPlayerIndex = 0;
-    _this.isPlaying = false;
-    _this.playerIndex = 0;
-    _this.selectedCube = null;
+    this.choosen = []
+    this.localPlayerIndex = 0
+    this.isPlaying = false
+    this.playerIndex = 0
+    this.selectedCube = null
 
-    staticProps(_this)({
-      camera: camera,
-      canvas: canvas,
-      cubes: cubes,
-      cubeUuids: cubeUuids,
-      neutral: neutral,
-      playerColors: playerColors,
-      scene: scene,
-      renderer: renderer
-    });
+    staticProps(this)({
+      camera,
+      canvas,
+      cubes,
+      cubeUuids,
+      neutral,
+      playerColors,
+      scene,
+      renderer
+    })
 
     // Default events.
     // //////////////////////////////////////////////////////////////////////
 
-    _this.on('nextPlayer', function (playerIndex) {
-      var localPlayerIndex = _this.localPlayerIndex;
+    this.on('nextPlayer', (playerIndex) => {
+      const localPlayerIndex = this.localPlayerIndex
 
       if (playerIndex === localPlayerIndex) {
-        _this.emit('localPlayerTurnStarts');
+        this.emit('localPlayerTurnStarts')
       } else {
-        var previousPlayerIndex = (playerIndex + 2) % 3;
+        const previousPlayerIndex = (playerIndex + 2) % 3
 
         if (previousPlayerIndex === localPlayerIndex) {
-          _this.emit('localPlayerTurnEnds');
+          this.emit('localPlayerTurnEnds')
         }
       }
-    });
+    })
 
-    _this.on('tris3d!', function () {
-      _this.isPlaying = false;
-    });
+    this.on('tris3d!', () => {
+      this.isPlaying = false
+    })
 
-    _this.on('nobodyWins', function () {
-      _this.isPlaying = false;
-    });
+    this.on('nobodyWins', () => {
+      this.isPlaying = false
+    })
 
-    window.addEventListener('resize', _this.resize, false);
-    return _this;
+    window.addEventListener('resize', this.resize, false)
   }
 
-  _createClass(Tris3dCanvas, [{
-    key: 'getBoundingClientRect',
-    value: function getBoundingClientRect() {
-      return this.canvas.parentElement.getBoundingClientRect();
-    }
+  getBoundingClientRect () {
+    return this.canvas.parentElement.getBoundingClientRect()
+  }
 
-    /**
-     * Improve winning combinations visibility.
-     */
+  /**
+   * Improve winning combinations visibility.
+   */
 
-  }, {
-    key: 'highlightTris',
-    value: function highlightTris(winningCombinations) {
-      var winningCubes = [];
+  highlightTris (winningCombinations) {
+    let winningCubes = []
 
-      // Get all winning cube indexes without repetitions.
-      winningCombinations.forEach(function (winningCombination) {
-        winningCombination.forEach(function (winningIndex) {
-          if (winningCubes.indexOf(winningIndex) === -1) {
-            winningCubes.push(winningIndex);
-          }
-        });
-      });
-
-      this.cubes.forEach(function (cube, cubeIndex) {
-        if (winningCubes.indexOf(cubeIndex) === -1) {
-          cube.material.transparent = true;
+    // Get all winning cube indexes without repetitions.
+    winningCombinations.forEach((winningCombination) => {
+      winningCombination.forEach((winningIndex) => {
+        if (winningCubes.indexOf(winningIndex) === -1) {
+          winningCubes.push(winningIndex)
         }
-      });
-    }
-  }, {
-    key: 'onMousedown',
-    value: function onMousedown(event) {
-      event.preventDefault();
-      event.stopPropagation();
+      })
+    })
 
-      var cubeUuids = this.cubeUuids,
-          localPlayerIndex = this.localPlayerIndex,
-          isPlaying = this.isPlaying,
-          playerIndex = this.playerIndex,
-          selectedCube = this.selectedCube;
+    this.cubes.forEach((cube, cubeIndex) => {
+      if (winningCubes.indexOf(cubeIndex) === -1) {
+        cube.material.transparent = true
+      }
+    })
+  }
 
+  onMousedown (event) {
+    event.preventDefault()
+    event.stopPropagation()
 
-      if (isPlaying) {
-        if (selectedCube && playerIndex === localPlayerIndex) {
-          var cubeIndex = cubeUuids.indexOf(selectedCube.uuid);
-          this.setChoice(cubeIndex);
-        }
+    const {
+      cubeUuids,
+      localPlayerIndex,
+      isPlaying,
+      playerIndex,
+      selectedCube
+    } = this
+
+    if (isPlaying) {
+      if (selectedCube && (playerIndex === localPlayerIndex)) {
+        const cubeIndex = cubeUuids.indexOf(selectedCube.uuid)
+        this.setChoice(cubeIndex)
       }
     }
-  }, {
-    key: 'onMousemove',
-    value: function onMousemove(event) {
-      // Cannot call `event.stopPropagation()`,
-      // otherwise the orbit control does not work.
-      event.preventDefault();
+  }
 
-      var camera = this.camera,
-          cubes = this.cubes;
+  onMousemove (event) {
+    // Cannot call `event.stopPropagation()`,
+    // otherwise the orbit control does not work.
+    event.preventDefault()
 
+    const {
+      camera,
+      cubes
+    } = this
 
-      var rect = this.getBoundingClientRect();
+    const rect = this.getBoundingClientRect()
 
-      // Find intersected cubes.
+    // Find intersected cubes.
 
-      var x = event.offsetX || event.clientX - rect.left;
-      var y = event.offsetY || event.clientY - rect.top;
+    const x = (event.offsetX || event.clientX - rect.left)
+    const y = (event.offsetY || event.clientY - rect.top)
 
-      var vector = new THREE.Vector3(x / rect.width * 2 - 1, -(y / rect.height) * 2 + 1, 1);
+    const vector = new THREE.Vector3(
+      (x / rect.width) * 2 - 1,
+      -(y / rect.height) * 2 + 1,
+      1
+    )
 
-      vector.unproject(camera);
+    vector.unproject(camera)
 
-      var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-      var intersectedCubes = ray.intersectObjects(cubes);
+    const ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize())
+    const intersectedCubes = ray.intersectObjects(cubes)
 
-      // Set selected cube.
+    // Set selected cube.
 
-      if (intersectedCubes.length > 0) {
-        this.selectedCube = intersectedCubes[0].object;
-      } else {
-        this.selectedCube = null;
+    if (intersectedCubes.length > 0) {
+      this.selectedCube = intersectedCubes[0].object
+    } else {
+      this.selectedCube = null
+    }
+  }
+
+  /**
+   * Start rendering the 3d scene.
+   */
+
+  render () {
+    const {
+      camera,
+      cubeUuids,
+      neutral,
+      renderer,
+      scene
+    } = this
+
+    let previousSelectedCube = null
+    let selectedCube = null
+
+    // The main 3d loop.
+    // //////////////////////////////////////////////////////////////////////
+
+    const isNotAvaliable = (cube) => {
+      const cubeIndex = cubeUuids.indexOf(cube.uuid)
+      return this.choosen.indexOf(cubeIndex) !== -1
+    }
+
+    const lowlight = (cube) => {
+      // Do nothing if cube is already choosen.
+      if (isNotAvaliable(cube)) return
+
+      cube.material.opacity = neutral.opacity
+      cube.material.color.setHex(neutral.color)
+    }
+
+    const highlight = (cube) => {
+      // Do nothing if cube is already choosen.
+      if (isNotAvaliable(cube)) return
+
+      const highlitedOpacity = 0.71
+      cube.material.opacity = highlitedOpacity
+
+      const isMyTurn = (this.localPlayerIndex === this.playerIndex)
+
+      if (isMyTurn) {
+        const color = this.playerColors[this.playerIndex]
+        cube.material.color.setHex(color)
       }
     }
 
-    /**
-     * Start rendering the 3d scene.
-     */
+    const loop = () => {
+      previousSelectedCube = selectedCube
+      selectedCube = this.selectedCube
 
-  }, {
-    key: 'render',
-    value: function render() {
-      var _this2 = this;
-
-      var camera = this.camera,
-          cubeUuids = this.cubeUuids,
-          neutral = this.neutral,
-          renderer = this.renderer,
-          scene = this.scene;
-
-
-      var previousSelectedCube = null;
-      var selectedCube = null;
-
-      // The main 3d loop.
-      // //////////////////////////////////////////////////////////////////////
-
-      var isNotAvaliable = function isNotAvaliable(cube) {
-        var cubeIndex = cubeUuids.indexOf(cube.uuid);
-        return _this2.choosen.indexOf(cubeIndex) !== -1;
-      };
-
-      var lowlight = function lowlight(cube) {
-        // Do nothing if cube is already choosen.
-        if (isNotAvaliable(cube)) return;
-
-        cube.material.opacity = neutral.opacity;
-        cube.material.color.setHex(neutral.color);
-      };
-
-      var highlight = function highlight(cube) {
-        // Do nothing if cube is already choosen.
-        if (isNotAvaliable(cube)) return;
-
-        var highlitedOpacity = 0.71;
-        cube.material.opacity = highlitedOpacity;
-
-        var isMyTurn = _this2.localPlayerIndex === _this2.playerIndex;
-
-        if (isMyTurn) {
-          var color = _this2.playerColors[_this2.playerIndex];
-          cube.material.color.setHex(color);
-        }
-      };
-
-      var loop = function loop() {
-        previousSelectedCube = selectedCube;
-        selectedCube = _this2.selectedCube;
-
-        // Highlight selected cube.
-        if (_this2.isPlaying) {
-          if (selectedCube) {
-            if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
-              lowlight(previousSelectedCube);
-            } else {
-              highlight(selectedCube);
-            }
+      // Highlight selected cube.
+      if (this.isPlaying) {
+        if (selectedCube) {
+          if (previousSelectedCube && selectedCube.uuid !== previousSelectedCube.uuid) {
+            lowlight(previousSelectedCube)
           } else {
-            if (previousSelectedCube) {
-              lowlight(previousSelectedCube);
-            }
+            highlight(selectedCube)
           }
-        }
-
-        renderer.render(scene, camera);
-
-        window.requestAnimationFrame(loop);
-      };
-
-      loop(); // Oh yeah!
-    }
-
-    /**
-     * Trigger window resize.
-     */
-
-  }, {
-    key: 'resize',
-    value: function resize() {
-      var camera = this.camera,
-          canvas = this.canvas,
-          renderer = this.renderer;
-
-
-      var rect = this.getBoundingClientRect();
-      var size = Math.min(rect.height, rect.width);
-      var width = size;
-      var height = size;
-
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-
-      renderer.setSize(width, height);
-    }
-
-    /**
-     * Set player choice.
-     */
-
-  }, {
-    key: 'setChoice',
-    value: function setChoice(cubeIndex) {
-      // Nothing to do if choice is already taken.
-      var choiceIsNotAvailable = this.choosen.indexOf(cubeIndex) > -1;
-      if (choiceIsNotAvailable) return;
-
-      var playerIndex = this.playerIndex;
-
-      // Store player choice and notify listeners.
-      var numberOfChoices = this.choosen.push(cubeIndex);
-      this.emit('setChoice', cubeIndex);
-
-      // Color choosen cube.
-      var color = this.playerColors[playerIndex];
-      this.cubes[cubeIndex].material.color.setHex(color);
-      this.cubes[cubeIndex].material.transparent = false;
-
-      // Check if current player wins.
-      // //////////////////////////////////////////////////////////////////////
-
-      // Get player choices.
-      var playerChoices = [];
-
-      for (var i = numberOfChoices - 1; i >= 0; i -= 3) {
-        playerChoices.push(this.choosen[i]);
-      }
-
-      // A choice can lead to more that one winning combination.
-      var winningCombinations = [];
-
-      // For every combination, check if it wins.
-      for (var k = 2; k < playerChoices.length; k++) {
-        for (var j = 1; j < k; j++) {
-          var coords0 = tris3d.coordinatesOfIndex(playerChoices[0]);
-          var coords1 = tris3d.coordinatesOfIndex(playerChoices[j]);
-          var coords2 = tris3d.coordinatesOfIndex(playerChoices[k]);
-
-          if (tris3d.isTris(coords0, coords1, coords2)) {
-            winningCombinations.push([playerChoices[0], playerChoices[j], playerChoices[k]]);
-          }
-        }
-      }
-
-      if (winningCombinations.length === 0) {
-        if (this.choosen.length === 27) {
-          this.emit('nobodyWins');
         } else {
-          // Next turn to play.
-          this.playerIndex = (playerIndex + 1) % 3;
-          this.emit('nextPlayer', this.playerIndex);
+          if (previousSelectedCube) {
+            lowlight(previousSelectedCube)
+          }
         }
-      } else {
-        this.emit('tris3d!', playerIndex, winningCombinations);
-        this.highlightTris(winningCombinations);
+      }
+
+      renderer.render(scene, camera)
+
+      window.requestAnimationFrame(loop)
+    }
+
+    loop() // Oh yeah!
+  }
+
+  /**
+   * Trigger window resize.
+   */
+
+  resize () {
+    const {
+      camera,
+      canvas,
+      renderer
+    } = this
+
+    const rect = this.getBoundingClientRect()
+    const size = Math.min(rect.height, rect.width)
+    const width = size
+    const height = size
+
+    camera.aspect = width / height
+    camera.updateProjectionMatrix()
+
+    renderer.setSize(width, height)
+  }
+
+  /**
+   * Set player choice.
+   */
+
+  setChoice (cubeIndex) {
+    // Nothing to do if choice is already taken.
+    const choiceIsNotAvailable = (this.choosen.indexOf(cubeIndex) > -1)
+    if (choiceIsNotAvailable) return
+
+    const playerIndex = this.playerIndex
+
+    // Store player choice and notify listeners.
+    const numberOfChoices = this.choosen.push(cubeIndex)
+    this.emit('setChoice', cubeIndex)
+
+    // Color choosen cube.
+    const color = this.playerColors[playerIndex]
+    this.cubes[cubeIndex].material.color.setHex(color)
+    this.cubes[cubeIndex].material.transparent = false
+
+    // Check if current player wins.
+    // //////////////////////////////////////////////////////////////////////
+
+    // Get player choices.
+    let playerChoices = []
+
+    for (let i = numberOfChoices - 1; i >= 0; i -= 3) {
+      playerChoices.push(this.choosen[i])
+    }
+
+    // A choice can lead to more that one winning combination.
+    let winningCombinations = []
+
+    // For every combination, check if it wins.
+    for (let k = 2; k < playerChoices.length; k++) {
+      for (let j = 1; j < k; j++) {
+        const coords0 = tris3d.coordinatesOfIndex(playerChoices[0])
+        const coords1 = tris3d.coordinatesOfIndex(playerChoices[j])
+        const coords2 = tris3d.coordinatesOfIndex(playerChoices[k])
+
+        if (tris3d.isTris(coords0, coords1, coords2)) {
+          winningCombinations.push([
+            playerChoices[0],
+            playerChoices[j],
+            playerChoices[k]
+          ])
+        }
       }
     }
 
-    /**
-     * Reset variables and cleanup playground.
-     */
-
-  }, {
-    key: 'resetPlayground',
-    value: function resetPlayground() {
-      this.choosen = [];
-      this.isPlaying = false;
-      this.playerIndex = 0;
-      this.selectedCube = null;
-
-      var neutral = this.neutral;
-
-      this.cubes.forEach(function (cube) {
-        cube.material.opacity = neutral.opacity;
-        cube.material.transparent = true;
-        cube.material.color.setHex(neutral.color);
-      });
+    if (winningCombinations.length === 0) {
+      if (this.choosen.length === 27) {
+        this.emit('nobodyWins')
+      } else {
+        // Next turn to play.
+        this.playerIndex = (playerIndex + 1) % 3
+        this.emit('nextPlayer', this.playerIndex)
+      }
+    } else {
+      this.emit('tris3d!', playerIndex, winningCombinations)
+      this.highlightTris(winningCombinations)
     }
+  }
 
-    /**
-     * Reset playground and start a brand new match.
-     */
+  /**
+   * Reset variables and cleanup playground.
+   */
 
-  }, {
-    key: 'startNewMatch',
-    value: function startNewMatch() {
-      this.resetPlayground();
-      this.isPlaying = true;
+  resetPlayground () {
+    this.choosen = []
+    this.isPlaying = false
+    this.playerIndex = 0
+    this.selectedCube = null
 
-      this.emit('nextPlayer', 0);
-    }
-  }]);
+    const neutral = this.neutral
 
-  return Tris3dCanvas;
-}(EventEmitter);
+    this.cubes.forEach((cube) => {
+      cube.material.opacity = neutral.opacity
+      cube.material.transparent = true
+      cube.material.color.setHex(neutral.color)
+    })
+  }
 
-exports.default = Tris3dCanvas;
+  /**
+   * Reset playground and start a brand new match.
+   */
+
+  startNewMatch () {
+    this.resetPlayground()
+    this.isPlaying = true
+
+    this.emit('nextPlayer', 0)
+  }
+}
+
+module.exports = exports.default = Tris3dCanvas
 
 },{"bindme":2,"events":4,"static-props":5,"three":7,"three-orbitcontrols":6,"tris3d":14}]},{},[1]);
