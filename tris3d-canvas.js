@@ -377,7 +377,6 @@ class Tris3dCanvas extends EventEmitter {
   resize () {
     const {
       camera,
-      canvas,
       renderer
     } = this
 

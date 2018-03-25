@@ -66,4 +66,3 @@ tris3dCanvas.on('tris3d!', (winnerPlayerIndex, winningCombinations) => {
 
 tris3dCanvas.render()
 tris3dCanvas.startNewMatch()
-
