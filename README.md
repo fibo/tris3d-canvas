@@ -16,8 +16,10 @@
 With [npm] do
 
 ```bash
-npm install tris3d-canvas
+npm install three tris3d-canvas
 ```
+
+Note that [three.js](https://threejs.org/) is required as a peer dependency.
 
 ## API
 
