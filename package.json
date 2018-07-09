@@ -56,6 +56,6 @@
     "bindme": "^1.0.2",
     "events": "^2.0.0",
     "static-props": "^1.1.1",
-    "three-orbitcontrols": "^2.0.0"
+    "three-orbitcontrols": "^2.1.2"
   }
 }
