@@ -7,9 +7,7 @@
 [License](#license)
 
 [![NPM version](https://badge.fury.io/js/tris3d-canvas.svg)](http://badge.fury.io/js/tris3d-canvas)
-[![Dependency Status](https://gemnasium.com/fibo/tris3d-canvas.svg)](https://gemnasium.com/fibo/tris3d-canvas)
-
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Installation
 
