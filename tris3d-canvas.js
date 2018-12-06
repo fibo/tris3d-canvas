@@ -1,11 +1,10 @@
 const bindme = require('bindme')
-const EventEmitter = require('events')
 const OrbitControls = require('three-orbitcontrols')
 const staticProps = require('static-props')
 const THREE = require('three')
 const tris3d = require('tris3d')
 
-class Tris3dCanvas extends EventEmitter {
+class Tris3dCanvas {
   /**
    * Create a tris3d canvas
    *
@@ -18,7 +17,7 @@ class Tris3dCanvas extends EventEmitter {
    */
 
   constructor (id, opt = {}) {
-    bindme(super(),
+    bindme(this,
       'onMousedown',
       'onMousemove',
       'resize'
@@ -59,10 +58,10 @@ class Tris3dCanvas extends EventEmitter {
     // //////////////////////////////////////////////////////////////////////
 
     // The 3d cubes array.
-    let cubes = []
+    const cubes = []
 
     // Remember (mesh cube) <--> (cell) association, using cube uuids.
-    let cubeUuids = []
+    const cubeUuids = []
 
     // Default materials.
     const neutral = {
@@ -212,6 +211,12 @@ class Tris3dCanvas extends EventEmitter {
     window.addEventListener('resize', this.resize, false)
   }
 
+  emit (eventType, eventDetail) {
+    const event = new CustomEvent(eventType, { detail: eventDetail })
+
+    this.canvas.dispatchEvent(event)
+  }
+
   getBoundingClientRect () {
     return this.canvas.parentElement.getBoundingClientRect()
   }
@@ -237,6 +242,10 @@ class Tris3dCanvas extends EventEmitter {
         cube.material.transparent = true
       }
     })
+  }
+
+  on (eventType, eventListener) {
+    this.canvas.addEventListener(eventType, event => eventListener(event.detail))
   }
 
   onMousedown (event) {

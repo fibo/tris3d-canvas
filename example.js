@@ -23,19 +23,13 @@ tris3dCanvas.on('nextPlayer', (playerIndex) => {
   // Bot choices.
   if (isOtherPlayerTurn) {
     // Just a little bit of random delay.
-    var delay = 710 + Math.random() * 1700
+    const delay = 710 + Math.random() * 1700
 
     setTimeout(() => {
-      var bot
-
       // Flip a coin, use smart ot bastar bot.
-      if (Math.random() < 0.5) {
-        bot = smart
-      } else {
-        bot = bastard
-      }
+      const bot = (Math.random() < 0.5) ? smart : bastard
 
-      var nextChoice = bot(tris3dCanvas.choosen)
+      const nextChoice = bot(tris3dCanvas.choosen)
 
       tris3dCanvas.setChoice(nextChoice)
     }, delay)
