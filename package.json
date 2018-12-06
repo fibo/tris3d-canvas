@@ -54,6 +54,6 @@
   "dependencies": {
     "bindme": "^1.0.2",
     "static-props": "^1.1.2",
-    "three-orbitcontrols": "^2.1.2"
+    "three-orbitcontrols": "^2.99.1"
   }
 }
