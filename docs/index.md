@@ -10,17 +10,17 @@ title: tris3d-canvas
 [License](#license)
 
 [![NPM version](https://badge.fury.io/js/tris3d-canvas.svg)](http://badge.fury.io/js/tris3d-canvas)
-[![Dependency Status](https://gemnasium.com/fibo/tris3d-canvas.svg)](https://gemnasium.com/fibo/tris3d-canvas)
-
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Installation
 
 With [npm] do
 
 ```bash
-npm install tris3d-canvas
+npm install three tris3d-canvas
 ```
+
+Note that [three.js](https://threejs.org/) is required as a peer dependency.
 
 ## API
 

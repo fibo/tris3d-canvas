@@ -10,15 +10,17 @@
   "license": "MIT",
   "main": "tris3d-canvas.js",
   "scripts": {
+    "browserify_example": "NODE_ENV=production NODE_PATH=. browserify example.js -o docs/example/bundle.js",
     "build": "npm run build_docs; npm run build_example",
     "build_docs": "npm run cp_package.json; npm run homepage",
-    "build_example": "NODE_ENV=production NODE_PATH=. browserify example.js -o docs/example/bundle.js",
+    "build_example": "npm run cp_index.html; npm run browserify_example",
     "check-deps": "npm outdated",
+    "cp_index.html": "cp index.html docs/example/",
     "cp_package.json": "cp package.json docs/_data/",
     "homepage": "echo \"---\ntitle: $npm_package_name\n---\" > docs/index.md; cat README.md >> docs/index.md",
     "lint": "standa example.js tris3d-canvas.js",
     "postversion": "git push origin v${npm_package_version}; npm publish; git push origin master",
-    "start": "NODE_PATH=. budo example.js -d . -l -o",
+    "start": "NODE_PATH=. budo example.js -s bundle.js -d . -l -o",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

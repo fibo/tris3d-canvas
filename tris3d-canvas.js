@@ -4,6 +4,14 @@ const staticProps = require('static-props')
 const THREE = require('three')
 const tris3d = require('tris3d')
 
+// mrdoob's threejs stats
+const stats = Stats ? new Stats() : null
+
+if (stats) {
+  stats.showPanel(1) // 0: fps, 1: ms, 2: mb, 3+: custom
+  document.body.appendChild(stats.dom)
+}
+
 class Tris3dCanvas {
   /**
    * Create a tris3d canvas
@@ -23,11 +31,11 @@ class Tris3dCanvas {
       'resize'
     )
 
-    const defaultBackgroundColor = 0xffffff
+    const defaultBackgroundColor = 0xefefef
     const defaultPlayerColors = [
-      0xff0000,
-      0x00ff00,
-      0x0000ff
+      0xDC143C,
+      0x20B2AA,
+      0x2F4F4F
     ]
 
     const backgroundColor = opt.backgroundColor || defaultBackgroundColor
@@ -353,6 +361,10 @@ class Tris3dCanvas {
     }
 
     const loop = () => {
+      if (stats) {
+        stats.begin()
+      }
+
       previousSelectedCube = selectedCube
       selectedCube = this.selectedCube
 
@@ -372,6 +384,10 @@ class Tris3dCanvas {
       }
 
       renderer.render(scene, camera)
+
+      if (stats) {
+        stats.end()
+      }
 
       window.requestAnimationFrame(loop)
     }
