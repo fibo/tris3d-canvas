@@ -48,7 +48,7 @@
     "cause it will be the one required by three-orbitcontrols"
   ],
   "devDependencies": {
-    "budo": "^11.5.0",
+    "budo": "^11.6.1",
     "console-log-div": "^0.6.3",
     "standa": "^12.0.1",
     "three": "*",
@@ -57,6 +57,6 @@
   "dependencies": {
     "bindme": "^1.0.2",
     "static-props": "^1.1.2",
-    "three-orbitcontrols": "^2.99.1"
+    "three-orbitcontrols": "^2.101.1"
   }
 }
