@@ -1,18 +1,8 @@
-/* global Stats */
-
 const bindme = require('bindme')
 const OrbitControls = require('three-orbitcontrols')
 const staticProps = require('static-props')
 const THREE = require('three')
 const tris3d = require('tris3d')
-
-// mrdoob's threejs stats
-const stats = Stats ? new Stats() : null
-
-if (stats) {
-  stats.showPanel(1) // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.body.appendChild(stats.dom)
-}
 
 class Tris3dCanvas {
   /**
@@ -363,10 +353,6 @@ class Tris3dCanvas {
     }
 
     const loop = () => {
-      if (stats) {
-        stats.begin()
-      }
-
       previousSelectedCube = selectedCube
       selectedCube = this.selectedCube
 
@@ -386,10 +372,6 @@ class Tris3dCanvas {
       }
 
       renderer.render(scene, camera)
-
-      if (stats) {
-        stats.end()
-      }
 
       window.requestAnimationFrame(loop)
     }
