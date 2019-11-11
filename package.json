@@ -43,20 +43,18 @@
   "/* about three.js dependency */": [
     "three is a peer dependency of three-orbitcontrols",
     "infact installation command is: npm install three tris3d-canvas",
-    "hence three is required as development dependency",
-    "its version is marked as *",
-    "cause it will be the one required by three-orbitcontrols"
+    "hence three is required as development dependency"
   ],
   "devDependencies": {
     "budo": "^11.6.3",
     "console-log-div": "^0.6.3",
-    "standa": "^12.2.0",
-    "three": "^0.108.0",
-    "tris3d-ai": "^0.6.1"
+    "standa": "^14.0.0",
+    "three": "^0.110.0"
   },
   "dependencies": {
     "bindme": "^1.0.2",
     "static-props": "^1.1.2",
-    "three-orbitcontrols": "^2.108.1"
+    "three-orbitcontrols": "^2.110.1",
+    "tris3d-ai": "^0.6.1"
   }
 }

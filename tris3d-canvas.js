@@ -1,3 +1,5 @@
+/* global Stats */
+
 const bindme = require('bindme')
 const OrbitControls = require('three-orbitcontrols')
 const staticProps = require('static-props')
